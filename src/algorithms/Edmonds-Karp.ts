@@ -1,4 +1,5 @@
 import FlowGraph, { FlowLink } from "../FlowGraph";
+import { Visualisation } from "../GraphVisualisation";
 
 export default {
   name: "Edmonds-Karp",
@@ -38,7 +39,9 @@ export default {
     \end{algorithmic}
     \end{algorithm}
   `,
-  implementation: (graph: FlowGraph) => {
+  implementation: function*(
+    graph: FlowGraph
+  ): IterableIterator<Visualisation[]> {
     const sourceNode = graph.getSourceNode();
     const sinkNode = graph.getSinkNode();
 
@@ -49,12 +52,18 @@ export default {
       pred = {}; // pred stores the link taken to each vertex
       while (q.length > 0) {
         const cur = q.shift()!;
+        console.log(graph.getLinksFromNode(cur.id));
+        yield [{ type: "HIGHLIGHT_NODE", node: cur }];
         for (const link of graph.getLinksFromNode(cur.id)) {
           if (
             pred[link.target] === undefined &&
             link.target !== sourceNode.id &&
             link.capacity > link.flow
           ) {
+            yield [
+              { type: "HIGHLIGHT_NODE", node: graph.getNode(link.target)! },
+              { type: "HIGHLIGHT_LINK", link: link }
+            ];
             pred[link.target] = link;
             q.push(graph.getNode(link.target)!);
           }

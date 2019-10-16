@@ -106,6 +106,7 @@ class FlowGraph {
   };
 
   getLinksFromNode = (nodeId: NodeId) => {
+    console.log(this.links);
     return this.links.filter(link => link.source === nodeId);
   };
 

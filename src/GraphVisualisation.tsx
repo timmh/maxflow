@@ -2,10 +2,23 @@ import React, { useRef, useEffect } from "react";
 import useComponentSize from "@rehooks/component-size";
 import * as d3 from "d3";
 import "d3-selection-multi";
-import FlowGraph from "./FlowGraph";
+import FlowGraph, { FlowLink, Node } from "./FlowGraph";
 import { forceSimulation } from "d3-force";
 
-const GraphVisualisation: React.FC<{ graph: FlowGraph }> = ({ graph }) => {
+export type Visualisation =
+  | {
+      type: "HIGHLIGHT_LINK";
+      link: FlowLink;
+    }
+  | {
+      type: "HIGHLIGHT_NODE";
+      node: Node;
+    };
+
+const GraphVisualisation: React.FC<{
+  graph: FlowGraph;
+  visualisations: Visualisation[];
+}> = ({ graph, visualisations }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const containerSize = useComponentSize(containerRef);
 
@@ -18,10 +31,19 @@ const GraphVisualisation: React.FC<{ graph: FlowGraph }> = ({ graph }) => {
     const sizeFactor = 2;
     const nodeRadius = 25;
     const arrowRadiusFactor = 0.5;
-    const arrowColor = "#000000";
+    const linkColor = "#000000";
     const backgroundColor = "#FFFFFF";
     const linkLabelSize = 10;
     const nodeDistance = 200;
+    const highlightColor = "#FF0000";
+
+    const highlightedNodes = visualisations.map(v =>
+      v.type === "HIGHLIGHT_NODE" ? v.node : null
+    );
+
+    const highlightedLinks = visualisations.map(v =>
+      v.type === "HIGHLIGHT_LINK" ? v.link : null
+    );
 
     const simulation =
       // @ts-ignore
@@ -59,18 +81,39 @@ const GraphVisualisation: React.FC<{ graph: FlowGraph }> = ({ graph }) => {
       .attr("xoverflow", "visible")
       .append("svg:path")
       .attr("d", "M 0,-5 L 10 ,0 L 0,5")
-      .attr("fill", arrowColor)
+      .attr("fill", linkColor)
+      .style("stroke", "none");
+
+    defs
+      .append("marker")
+      .attr("id", "arrowhead-highlighted")
+      .attr("viewBox", "-0 -5 10 10")
+      .attr("refX", nodeRadius * Math.sin(Math.PI * arrowRadiusFactor))
+      .attr("refY", 0)
+      .attr("orient", "auto")
+      .attr("markerWidth", 13)
+      .attr("markerHeight", 13)
+      .attr("xoverflow", "visible")
+      .append("svg:path")
+      .attr("d", "M 0,-5 L 10 ,0 L 0,5")
+      .attr("fill", highlightColor)
       .style("stroke", "none");
 
     const links = svg
       .append("g")
       .attr("class", "link")
-      .attr("stroke", arrowColor)
       .selectAll(".link")
       .data(graph.links)
       .join("line")
+      .attr("stroke", d =>
+        highlightedLinks.includes(d) ? highlightColor : linkColor
+      )
       .attr("stroke-width", 1)
-      .attr("marker-end", "url(#arrowhead)");
+      .attr("marker-end", d =>
+        highlightedLinks.includes(d)
+          ? "url(#arrowhead-highlighted)"
+          : "url(#arrowhead)"
+      );
 
     const linkLabels = svg
       .selectAll(".link-label")
@@ -92,7 +135,7 @@ const GraphVisualisation: React.FC<{ graph: FlowGraph }> = ({ graph }) => {
       .style("text-anchor", "middle")
       .style("dominant-baseline", "central")
       .attr("font-size", linkLabelSize)
-      .attr("fill", arrowColor)
+      .attr("fill", linkColor)
       .text(d => `${d.flow} / ${d.capacity}`);
 
     const nodes = svg
@@ -106,7 +149,9 @@ const GraphVisualisation: React.FC<{ graph: FlowGraph }> = ({ graph }) => {
       .attr("class", "node")
       .attr("cx", 0)
       .attr("cy", 0)
-      .attr("fill", "white")
+      .attr("fill", d =>
+        highlightedNodes.includes(d) ? highlightColor : backgroundColor
+      )
       .attr("stroke", "black")
       .attr("stroke-width", 2)
       .attr("r", nodeRadius);
@@ -198,7 +243,7 @@ const GraphVisualisation: React.FC<{ graph: FlowGraph }> = ({ graph }) => {
     });
 
     // simulation.restart();
-  }, [graph, containerRef, containerSize]);
+  }, [graph, containerRef, containerSize, visualisations]);
 
   return <div className="graph-visualisation" ref={containerRef} />;
 };
