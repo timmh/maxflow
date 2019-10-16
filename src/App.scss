@@ -1,0 +1,16 @@
+.app {
+  display: flex;
+  flex-grow: 1;
+  align-items: stretch;
+  min-height: 100vh;
+}
+
+.graph-visualisation {
+  flex: 2;
+  max-height: 100vh; // TODO: remove
+  overflow: hidden;
+}
+
+.pseudocode {
+  flex: 1;
+}
