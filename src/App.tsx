@@ -42,12 +42,19 @@ const App: React.FC = () => {
       setAlgorithmImplementationInstance(algorithm.implementation(graph));
   }, [algorithm, graph]);
   const [visualisations, setVisualisations] = useState<Visualisation[]>([]);
+  const [highlightedLines, setHighlightedLines] = useState<number[]>([]);
   useInterval(
     () => {
       if (!algorithmImplementationInstance) return;
-      const nextVisualisations = algorithmImplementationInstance.next().value;
-      console.log(nextVisualisations);
-      setVisualisations(nextVisualisations || []);
+      const result = algorithmImplementationInstance.next().value;
+      if (!result) {
+        setVisualisations([]);
+        setHighlightedLines([]);
+      } else {
+        const { visualisations, highlightedLines } = result;
+        setVisualisations(visualisations);
+        setHighlightedLines(highlightedLines);
+      }
     },
     1000,
     [algorithmImplementationInstance]
@@ -58,7 +65,7 @@ const App: React.FC = () => {
   return (
     <div className="app">
       <GraphVisualisation graph={graph} visualisations={visualisations} />
-      <Pseudocode algorithm={algorithm} />
+      <Pseudocode algorithm={algorithm} highlightedLines={highlightedLines} />
     </div>
   );
 };

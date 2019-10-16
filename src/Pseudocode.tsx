@@ -7,9 +7,10 @@ declare global {
   };
 }
 
-const Pseudocode: React.FC<{ algorithm: { pseudocode: string } }> = ({
-  algorithm
-}) => {
+const Pseudocode: React.FC<{
+  algorithm: { pseudocode: string };
+  highlightedLines: number[];
+}> = ({ algorithm, highlightedLines }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = containerRef.current;
@@ -21,6 +22,18 @@ const Pseudocode: React.FC<{ algorithm: { pseudocode: string } }> = ({
       // noEnd: true
     });
   }, [algorithm]);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    el.querySelectorAll(".ps-line").forEach((line, i) => {
+      if (highlightedLines.includes(i + 1)) {
+        line.classList.add("ps-line--highlighted");
+      } else {
+        line.classList.remove("ps-line--highlighted");
+      }
+    });
+  }, [algorithm, highlightedLines]);
 
   return (
     <div className="pseudocode">

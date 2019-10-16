@@ -36,7 +36,7 @@ const GraphVisualisation: React.FC<{
     const backgroundColor = "#FFFFFF";
     const linkLabelSize = 10;
     const nodeDistance = 200;
-    const highlightColor = "#FF0000";
+    const highlightColor = "gold";
 
     const highlightedNodes = visualisations.map(v =>
       v.type === "HIGHLIGHT_NODE" ? v.node : null

@@ -11,7 +11,6 @@ export default {
         \REPEAT
             \STATE $p = \left[\ \right]$
             \STATE $q = \left[\ \right]$
-
             \WHILE{$q_\mathrm{length}$ = 0}
                 \STATE $c =$ \CALL{dequeue}{$q$}
                 \FOR{edge $e$ originating from $c$}
@@ -41,7 +40,10 @@ export default {
   `,
   implementation: function*(
     graph: FlowGraph
-  ): IterableIterator<Visualisation[]> {
+  ): IterableIterator<{
+    visualisations: Visualisation[];
+    highlightedLines: number[];
+  }> {
     const sourceNode = graph.getSourceNode();
     const sinkNode = graph.getSinkNode();
 
@@ -52,18 +54,26 @@ export default {
       pred = {}; // pred stores the link taken to each vertex
       while (q.length > 0) {
         const cur = q.shift()!;
-        console.log(graph.getLinksFromNode(cur.id));
-        yield [{ type: "HIGHLIGHT_NODE", node: cur }];
+        yield {
+          visualisations: [{ type: "HIGHLIGHT_NODE", node: cur }],
+          highlightedLines: [7]
+        };
         for (const link of graph.getLinksFromNode(cur.id)) {
           if (
             pred[link.target.id] === undefined &&
             link.target.id !== sourceNode.id &&
             link.capacity > link.flow
           ) {
-            yield [
-              { type: "HIGHLIGHT_NODE", node: graph.getNode(link.target.id)! },
-              { type: "HIGHLIGHT_LINK", link: link }
-            ];
+            yield {
+              visualisations: [
+                {
+                  type: "HIGHLIGHT_NODE",
+                  node: graph.getNode(link.target.id)!
+                },
+                { type: "HIGHLIGHT_LINK", link: link }
+              ],
+              highlightedLines: [10, 11]
+            };
             pred[link.target.id] = link;
             q.push(graph.getNode(link.target.id)!);
           }
@@ -85,9 +95,17 @@ export default {
             currentLink.source.id
           )!;
           currentLink.flow = currentLink.flow + df;
-          yield [{ type: "HIGHLIGHT_LINK", link: currentLink }];
+          yield {
+            visualisations: [{ type: "HIGHLIGHT_LINK", link: currentLink }],
+            highlightedLines: [22]
+          };
           reverseCurrentLink.flow = reverseCurrentLink.flow - df;
-          yield [{ type: "HIGHLIGHT_LINK", link: reverseCurrentLink }];
+          yield {
+            visualisations: [
+              { type: "HIGHLIGHT_LINK", link: reverseCurrentLink }
+            ],
+            highlightedLines: [23]
+          };
           currentLink = pred[currentLink.source.id];
         }
         flow = flow + df;
