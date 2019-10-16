@@ -7,8 +7,8 @@ export interface Node {
 }
 
 export interface FlowLink {
-  readonly source: NodeId;
-  readonly target: NodeId;
+  readonly source: { id: NodeId };
+  readonly target: { id: NodeId };
   capacity: number;
   flow: number;
 }
@@ -47,13 +47,14 @@ class FlowGraph {
     const nodeIds = nodes.map(node => node.id);
     if (
       links.filter(
-        link => nodeIds.includes(link.source) && nodeIds.includes(link.target)
+        link =>
+          nodeIds.includes(link.source.id) && nodeIds.includes(link.target.id)
       ).length !== links.length
     ) {
       throw new Error("Links contain unknown node ids");
     }
 
-    const linkIds = links.map(link => `${link.source}-${link.target}`);
+    const linkIds = links.map(link => `${link.source.id}-${link.target.id}`);
     if (linkIds.length !== new Set(linkIds).size) {
       throw new Error("Links are not unique");
     }
@@ -81,7 +82,7 @@ class FlowGraph {
     }
     this.nodes = this.nodes.filter(node => node.id !== nodeId);
     this.links = this.links.filter(
-      link => link.source !== nodeId && link.target !== nodeId
+      link => link.source.id !== nodeId && link.target.id !== nodeId
     );
   };
 
@@ -92,7 +93,7 @@ class FlowGraph {
 
   getLink = (fromId: NodeId, toId: NodeId) => {
     return this.links.find(
-      link => link.source === fromId && link.target === toId
+      link => link.source.id === fromId && link.target.id === toId
     );
   };
 
@@ -101,17 +102,17 @@ class FlowGraph {
       throw new Error("Link does not exist");
     }
     this.links = this.links.filter(
-      link => link.source !== fromId && link.target !== toId
+      link => link.source.id !== fromId && link.target.id !== toId
     );
   };
 
   getLinksFromNode = (nodeId: NodeId) => {
     console.log(this.links);
-    return this.links.filter(link => link.source === nodeId);
+    return this.links.filter(link => link.source.id === nodeId);
   };
 
   getLinksToNode = (nodeId: NodeId) => {
-    return this.links.filter(link => link.target === nodeId);
+    return this.links.filter(link => link.target.id === nodeId);
   };
 }
 

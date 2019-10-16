@@ -12,10 +12,10 @@ const graph = new FlowGraph(
     { id: "C", type: "sink", title: "C" }
   ],
   [
-    { source: "A", target: "B", capacity: 10, flow: 0 },
-    { source: "B", target: "A", capacity: 2, flow: 0 },
-    { source: "B", target: "C", capacity: 5, flow: 0 },
-    { source: "C", target: "B", capacity: 2, flow: 0 }
+    { source: { id: "A" }, target: { id: "B" }, capacity: 10, flow: 0 },
+    { source: { id: "B" }, target: { id: "A" }, capacity: 2, flow: 0 },
+    { source: { id: "B" }, target: { id: "C" }, capacity: 5, flow: 0 },
+    { source: { id: "C" }, target: { id: "B" }, capacity: 2, flow: 0 }
   ]
 );
 
@@ -41,9 +41,7 @@ const App: React.FC = () => {
     algorithm &&
       setAlgorithmImplementationInstance(algorithm.implementation(graph));
   }, [algorithm, graph]);
-  const [visualisations, setVisualisations] = useState<Visualisation[]>([
-    { type: "HIGHLIGHT_LINK", link: graph.getLink("A", "B")! }
-  ]);
+  const [visualisations, setVisualisations] = useState<Visualisation[]>([]);
   useInterval(
     () => {
       if (!algorithmImplementationInstance) return;

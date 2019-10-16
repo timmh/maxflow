@@ -56,16 +56,16 @@ export default {
         yield [{ type: "HIGHLIGHT_NODE", node: cur }];
         for (const link of graph.getLinksFromNode(cur.id)) {
           if (
-            pred[link.target] === undefined &&
-            link.target !== sourceNode.id &&
+            pred[link.target.id] === undefined &&
+            link.target.id !== sourceNode.id &&
             link.capacity > link.flow
           ) {
             yield [
-              { type: "HIGHLIGHT_NODE", node: graph.getNode(link.target)! },
+              { type: "HIGHLIGHT_NODE", node: graph.getNode(link.target.id)! },
               { type: "HIGHLIGHT_LINK", link: link }
             ];
-            pred[link.target] = link;
-            q.push(graph.getNode(link.target)!);
+            pred[link.target.id] = link;
+            q.push(graph.getNode(link.target.id)!);
           }
         }
       }
@@ -75,18 +75,20 @@ export default {
         let currentLink = pred[sinkNode.id];
         while (currentLink !== undefined) {
           df = Math.min(df, currentLink.capacity - currentLink.flow);
-          currentLink = pred[currentLink.source];
+          currentLink = pred[currentLink.source.id];
         }
 
         currentLink = pred[sinkNode.id];
         while (currentLink !== undefined) {
           const reverseCurrentLink = graph.getLink(
-            currentLink.target,
-            currentLink.source
+            currentLink.target.id,
+            currentLink.source.id
           )!;
           currentLink.flow = currentLink.flow + df;
+          yield [{ type: "HIGHLIGHT_LINK", link: currentLink }];
           reverseCurrentLink.flow = reverseCurrentLink.flow - df;
-          currentLink = pred[currentLink.source];
+          yield [{ type: "HIGHLIGHT_LINK", link: reverseCurrentLink }];
+          currentLink = pred[currentLink.source.id];
         }
         flow = flow + df;
       }

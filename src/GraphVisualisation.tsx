@@ -24,6 +24,7 @@ const GraphVisualisation: React.FC<{
 
   useEffect(() => {
     const el = containerRef.current;
+
     if (!el) return;
     el.innerHTML = "";
     const { width, height } = containerSize;
@@ -51,13 +52,14 @@ const GraphVisualisation: React.FC<{
         .force(
           "link",
           d3
+            // @ts-ignore
             .forceLink(graph.links)
             // @ts-ignore
             .id(d => d.id)
             .distance(nodeDistance)
             .strength(1)
         )
-        .force("charge", d3.forceManyBody())
+        // .force("charge", d3.forceManyBody());
         .force("center", d3.forceCenter(width / 2, height / 2))
         .force("collision", d3.forceCollide().radius(nodeRadius * 2));
 
@@ -100,11 +102,11 @@ const GraphVisualisation: React.FC<{
       .style("stroke", "none");
 
     const links = svg
-      .append("g")
-      .attr("class", "link")
       .selectAll(".link")
+      .attr("class", "link")
       .data(graph.links)
-      .join("line")
+      .enter()
+      .append("line")
       .attr("stroke", d =>
         highlightedLinks.includes(d) ? highlightColor : linkColor
       )
@@ -208,30 +210,43 @@ const GraphVisualisation: React.FC<{
     simulation.on("tick", () => {
       links
         // @ts-ignore
-        .attrs(({ source, target }) => {
+        .attrs(d => {
+          const source = graph.getNode(d.source.id);
+          const target = graph.getNode(d.target.id);
+          // @ts-ignore
           const dx = target.x - source.x;
+          // @ts-ignore
           const dy = target.y - source.y;
           const a = Math.atan2(dx, dy);
           const ox = Math.cos(a) * arrowRadiusFactor * nodeRadius;
           const oy = -Math.sin(a) * arrowRadiusFactor * nodeRadius;
 
           return {
+            // @ts-ignore
             x1: source.x + ox,
+            // @ts-ignore
             y1: source.y + oy,
+            // @ts-ignore
             x2: target.x + ox,
+            // @ts-ignore
             y2: target.y + oy
           };
         });
       linkLabels
         // @ts-ignore
-        .attrs(({ source, target }) => {
+        .attrs(d => {
+          const source = graph.getNode(d.source.id);
+          const target = graph.getNode(d.target.id);
+          // @ts-ignore
           const dx = target.x - source.x;
+          // @ts-ignore
           const dy = target.y - source.y;
           const a = Math.atan2(dx, dy);
           const ox = Math.cos(a) * arrowRadiusFactor * nodeRadius;
           const oy = -Math.sin(a) * arrowRadiusFactor * nodeRadius;
 
           return {
+            // @ts-ignore
             transform: `translate(${source.x + dx / 2 + ox}, ${source.y +
               dy / 2 +
               oy})`
