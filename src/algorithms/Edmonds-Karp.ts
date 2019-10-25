@@ -49,6 +49,7 @@ export default {
 
     let flow = 0; // initialize flow to zero
     let pred: { [key: string]: FlowLink };
+    let finalPred: { [key: string]: FlowLink } = {};
     do {
       const q = [sourceNode]; // queue initially only contains the source node
       pred = {}; // pred stores the link taken to each vertex
@@ -109,7 +110,16 @@ export default {
           currentLink = pred[currentLink.source.id];
         }
         flow = flow + df;
+        if (df > 0) finalPred = pred;
       }
     } while (pred[sinkNode.id] !== undefined);
+    yield {
+      visualisations: Object.values(finalPred).map(link => ({
+        type: "HIGHLIGHT_LINK",
+        link
+      })),
+      highlightedLines: [28]
+    };
+    return flow;
   }
 };

@@ -10,7 +10,7 @@ function useInterval(
   // Remember the latest callback.
   useEffect(() => {
     savedCallback.current = callback;
-  }, [callback, ...(dependencies || [])]);
+  }, [callback, dependencies]);
 
   // Set up the interval.
   useEffect(() => {

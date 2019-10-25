@@ -17,15 +17,37 @@ class FlowGraph {
   nodes: Node[];
   links: FlowLink[];
 
-  constructor(nodes: Node[] = [], links: FlowLink[]) {
+  constructor(nodes: Node[] = [], alinks: FlowLink[]) {
     FlowGraph.assertValidNodes(nodes);
     this.nodes = nodes;
+    const links = [...alinks];
+    links.forEach((link1: FlowLink) => {
+      if (
+        !links.find(
+          (link2: FlowLink) =>
+            link2.source.id === link1.target.id &&
+            link2.target.id === link1.source.id
+        )
+      ) {
+        links.push({
+          source: { id: link1.target.id },
+          target: { id: link1.source.id },
+          capacity: 0,
+          flow: 0
+        });
+      }
+    });
     FlowGraph.assertValidLinks(nodes, links);
     this.links = links;
   }
 
   exportGraph = () => {
-    return btoa(JSON.stringify({ nodes: this.nodes, links: this.links }));
+    return btoa(
+      JSON.stringify({
+        nodes: this.nodes,
+        links: this.links.map(link => ({ ...link, flow: 0 }))
+      })
+    );
   };
 
   importGraph = (exportedGraph: string) => {
@@ -107,7 +129,6 @@ class FlowGraph {
   };
 
   getLinksFromNode = (nodeId: NodeId) => {
-    console.log(this.links);
     return this.links.filter(link => link.source.id === nodeId);
   };
 

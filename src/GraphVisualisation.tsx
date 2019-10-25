@@ -15,53 +15,26 @@ export type Visualisation =
       node: Node;
     };
 
+const nodeRadius = 25;
+const arrowRadiusFactor = 0.5;
+const linkColor = "#000000";
+const backgroundColor = "#FFFFFF";
+const linkLabelSize = 10;
+const nodeDistance = 200;
+const highlightColor = "gold";
+
 const GraphVisualisation: React.FC<{
   graph: FlowGraph;
   visualisations: Visualisation[];
 }> = ({ graph, visualisations }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const containerSize = useComponentSize(containerRef);
+  const { width, height } = containerSize;
+  const el = containerRef.current;
 
   useEffect(() => {
-    const el = containerRef.current;
-
     if (!el) return;
     el.innerHTML = "";
-    const { width, height } = containerSize;
-
-    const sizeFactor = 2;
-    const nodeRadius = 25;
-    const arrowRadiusFactor = 0.5;
-    const linkColor = "#000000";
-    const backgroundColor = "#FFFFFF";
-    const linkLabelSize = 10;
-    const nodeDistance = 200;
-    const highlightColor = "gold";
-
-    const highlightedNodes = visualisations.map(v =>
-      v.type === "HIGHLIGHT_NODE" ? v.node : null
-    );
-
-    const highlightedLinks = visualisations.map(v =>
-      v.type === "HIGHLIGHT_LINK" ? v.link : null
-    );
-
-    const simulation =
-      // @ts-ignore
-      forceSimulation(graph.nodes)
-        .force(
-          "link",
-          d3
-            // @ts-ignore
-            .forceLink(graph.links)
-            // @ts-ignore
-            .id(d => d.id)
-            .distance(nodeDistance)
-            .strength(1)
-        )
-        // .force("charge", d3.forceManyBody());
-        .force("center", d3.forceCenter(width / 2, height / 2))
-        .force("collision", d3.forceCollide().radius(nodeRadius * 2));
 
     const svg = d3
       .select(el)
@@ -100,13 +73,47 @@ const GraphVisualisation: React.FC<{
       .attr("d", "M 0,-5 L 10 ,0 L 0,5")
       .attr("fill", highlightColor)
       .style("stroke", "none");
+  }, [el, width, height]);
 
-    const links = svg
-      .selectAll(".link")
-      .attr("class", "link")
-      .data(graph.links)
+  useEffect(() => {
+    if (!el) return;
+    const svg = d3.select(el).select("svg");
+
+    const highlightedNodes = visualisations.map(v =>
+      v.type === "HIGHLIGHT_NODE" ? v.node : null
+    );
+
+    const highlightedLinks = visualisations.map(v =>
+      v.type === "HIGHLIGHT_LINK" ? v.link : null
+    );
+
+    const simulation =
+      // @ts-ignore
+      forceSimulation(graph.nodes)
+        .force(
+          "link",
+          d3
+            // @ts-ignore
+            .forceLink(graph.links)
+            // @ts-ignore
+            .id(d => d.id)
+            .distance(nodeDistance)
+            .strength(100)
+        )
+        // .force("charge", d3.forceManyBody().strength(-1))
+        .force("center", d3.forceCenter(width / 2, height / 2))
+        // .force("x", d3.forceX(width / 2).strength(0.001))
+        // .force("y", d3.forceY(height / 2).strength(0.001))
+        .force("collision", d3.forceCollide().radius(nodeRadius * 3));
+
+    const links = svg.selectAll(".link").data(graph.links);
+
+    links
       .enter()
       .append("line")
+      .attr("class", "link");
+
+    links
       .attr("stroke", d =>
         highlightedLinks.includes(d) ? highlightColor : linkColor
       )
@@ -117,48 +124,85 @@ const GraphVisualisation: React.FC<{
           : "url(#arrowhead)"
       );
 
-    const linkLabels = svg
-      .selectAll(".link-label")
-      .data(graph.links)
+    // const linkLabels = svg.selectAll(".link-label").data(graph.links);
+
+    // linkLabels.exit().remove();
+
+    // const linkLabelGroupsEnter = linkLabels
+    //   .enter()
+    //   .append("g")
+    //   .attr("class", "link-label");
+
+    // linkLabelGroupsEnter
+    //   .append("text")
+    //   .style("text-anchor", "middle")
+    //   .style("dominant-baseline", "central")
+    //   .attr("font-size", linkLabelSize)
+    //   .attr("fill", backgroundColor)
+    //   .attr("stroke", backgroundColor)
+    //   .attr("stroke-width", linkLabelSize)
+    //   .text(d => `${d.flow}/${d.capacity}`);
+    // linkLabelGroupsEnter
+    //   .append("text")
+    //   .style("text-anchor", "middle")
+    //   .style("dominant-baseline", "central")
+    //   .attr("font-size", linkLabelSize)
+    //   .attr("fill", linkColor)
+    //   .text(d => `${d.flow}/${d.capacity}`);
+
+    const linkLabels = svg.selectAll(".link-label").data(graph.links);
+
+    linkLabels.exit().remove();
+    const linkLabelsEnter = linkLabels
       .enter()
-      .append("g");
+      .append("g")
+      .attr("class", "link-label");
+    linkLabelsEnter.append("text").attr("class", "link-label-background");
 
     linkLabels
-      .append("text")
+      .selectAll(".link-label-background")
       .style("text-anchor", "middle")
       .style("dominant-baseline", "central")
       .attr("font-size", linkLabelSize)
       .attr("fill", backgroundColor)
       .attr("stroke", backgroundColor)
       .attr("stroke-width", linkLabelSize)
-      .text(d => `${d.flow} / ${d.capacity}`);
+      // @ts-ignore
+      .text(d => `${d.flow}/${d.capacity}`);
+
+    linkLabelsEnter.append("text").attr("class", "link-label-foreground");
     linkLabels
-      .append("text")
+      .selectAll(".link-label-foreground")
       .style("text-anchor", "middle")
       .style("dominant-baseline", "central")
       .attr("font-size", linkLabelSize)
       .attr("fill", linkColor)
-      .text(d => `${d.flow} / ${d.capacity}`);
+      // @ts-ignore
+      .text(d => `${d.flow}/${d.capacity}`);
 
-    const nodes = svg
-      .selectAll(".node")
-      .data(graph.nodes)
+    const nodes = svg.selectAll(".node").data(graph.nodes);
+    const nodesEnter = nodes
       .enter()
-      .append("g");
+      .append("g")
+      .attr("class", "node");
 
-    const circles = nodes
-      .append("circle")
-      .attr("class", "node")
+    nodesEnter.append("circle").attr("class", "node-circle");
+    nodesEnter.append("text").attr("class", "node-label");
+
+    nodes
+      .selectAll(".node-circle")
       .attr("cx", 0)
       .attr("cy", 0)
+      // @ts-ignore
       .attr("fill", d =>
+        // @ts-ignore
         highlightedNodes.includes(d) ? highlightColor : backgroundColor
       )
       .attr("stroke", "black")
       .attr("stroke-width", 2)
       .attr("r", nodeRadius);
-    const labels = nodes
-      .append("text")
+    nodes
+      .selectAll(".node-label")
       .attr("cx", 0)
       .attr("cy", 0)
       .attr("font-family", "sans-serif")
@@ -166,6 +210,7 @@ const GraphVisualisation: React.FC<{
       .style("text-anchor", "middle")
       .attr("dominant-baseline", "middle")
       .style("cursor", "default")
+      // @ts-ignore
       .text(d => `${d.title}`);
 
     nodes.call(
@@ -258,7 +303,7 @@ const GraphVisualisation: React.FC<{
     });
 
     // simulation.restart();
-  }, [graph, containerRef, containerSize, visualisations]);
+  }, [graph, containerRef, containerSize, visualisations, el, width, height]);
 
   return <div className="graph-visualisation" ref={containerRef} />;
 };
