@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-import GraphVisualisation, { Visualisation } from "./GraphVisualisation";
+import GraphVisualisation, {
+  Visualisation,
+  VisRef
+} from "./GraphVisualisation";
 import "./App.scss";
 import FlowGraph from "./FlowGraph";
 import Pseudocode from "./Pseudocode";
@@ -56,7 +59,7 @@ window.importGraph = t => graph.importGraph(t);
 interface Algorithm {
   name: string;
   pseudocode: string;
-  implementation: (graph: FlowGraph) => Generator<never, void, unknown>;
+  implementation: (vis: VisRef) => Generator<never, void, unknown>;
 }
 
 const App: React.FC = () => {
@@ -74,23 +77,29 @@ const App: React.FC = () => {
     visualisations: Visualisation[];
     highlightedLines: number[];
   }> | null>(null);
-  useEffect(() => {
-    algorithm &&
-      setAlgorithmImplementationInstance(algorithm.implementation(graph));
-  }, [algorithm]);
+  const [algorithmRunning, setAlgorithmRunning] = useState(false);
   const [visualisations, setVisualisations] = useState<Visualisation[]>([]);
   const [highlightedLines, setHighlightedLines] = useState<number[]>([]);
+  const [visRef, setVisRef] = useState<VisRef | null>(null);
+
+  useEffect(() => {
+    algorithm &&
+      visRef &&
+      setAlgorithmImplementationInstance(algorithm.implementation(visRef));
+  }, [algorithm, visRef]);
   useInterval(
     () => {
       if (!algorithmImplementationInstance) return;
       const result = algorithmImplementationInstance.next();
       if (!result || result.done) {
+        setAlgorithmRunning(false);
         // setVisualisations([]);
         // setHighlightedLines([]);
       } else {
         const { visualisations, highlightedLines } = result.value;
-        // setVisualisations(visualisations);
-        // setHighlightedLines(highlightedLines);
+        setAlgorithmRunning(true);
+        setVisualisations(visualisations);
+        setHighlightedLines(highlightedLines);
       }
     },
     1000,
@@ -101,7 +110,13 @@ const App: React.FC = () => {
 
   return (
     <div className="app">
-      <GraphVisualisation graph={graph} visualisations={visualisations} />
+      <GraphVisualisation
+        graph={graph}
+        visRef={(nextVisRef: any) => {
+          if (nextVisRef !== visRef) setVisRef(nextVisRef);
+        }}
+        disableInteraction={algorithmRunning}
+      />
       <Pseudocode algorithm={algorithm} highlightedLines={highlightedLines} />
     </div>
   );
