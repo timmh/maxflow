@@ -2,6 +2,8 @@ import FlowGraph, { FlowLink } from "../FlowGraph";
 import { Visualisation, VisRef } from "../GraphVisualisation";
 import { EdgeSingular } from "cytoscape";
 
+const resetHighlighted = (cy: any) => {};
+
 export default {
   name: "Edmonds-Karp",
   pseudocode: String.raw`
@@ -42,10 +44,8 @@ export default {
   implementation: function*(
     vis: VisRef
   ): IterableIterator<{
-    visualisations: Visualisation[];
     highlightedLines: number[];
   }> {
-    console.log(vis);
     const sourceNode = vis.cy.nodes('node[type="source"]')[0];
     const sinkNode = vis.cy.nodes('node[type="sink"]')[0];
     // const sourceNode = graph.getSourceNode();
@@ -62,9 +62,10 @@ export default {
       pred = {};
 
       while (q.length > 0) {
-        const cur = q.shift();
+        const cur: cytoscape.NodeSingular = q.shift()!;
+        vis.cy.$(".highlighted").removeClass("highlighted");
+        cur.addClass("highlighted");
         yield {
-          visualisations: [],
           highlightedLines: [7]
         };
         for (let link of cur!.outgoers("edge").toArray() as EdgeSingular[]) {
@@ -73,8 +74,9 @@ export default {
             link.target().id() !== sourceNode.id() &&
             link.data("capacity") > link.data("flow")
           ) {
+            vis.cy.$(".highlighted").removeClass("highlighted");
+            link.target().addClass("highlighted");
             yield {
-              visualisations: [],
               highlightedLines: [10, 11]
             };
             pred[link.target().id()] = link;
@@ -100,13 +102,15 @@ export default {
             .parallelEdges()
             .difference(currentLink.codirectedEdges())[0];
           currentLink.data("flow", currentLink.data("flow") + df);
+          vis.cy.$(".highlighted").removeClass("highlighted");
+          currentLink.addClass("highlighted");
           yield {
-            visualisations: [],
             highlightedLines: [22]
           };
           reverseCurrentLink.data("flow", reverseCurrentLink.data("flow") - df);
+          vis.cy.$(".highlighted").removeClass("highlighted");
+          reverseCurrentLink.addClass("highlighted");
           yield {
-            visualisations: [],
             highlightedLines: [23]
           };
           currentLink = pred[currentLink.source().id()];
@@ -114,82 +118,14 @@ export default {
         flow = flow + df;
       }
     } while (pred[sinkNode.id()] !== undefined);
+    vis.cy.$(".highlighted").removeClass("highlighted");
     yield {
-      visualisations: [],
       highlightedLines: [28]
     };
     return flow;
-
-    // do {
-    //   const q = [sourceNode]; // queue initially only contains the source node
-    //   pred = {}; // pred stores the link taken to each vertex
-    //   while (q.length > 0) {
-    //     const cur = q.shift()!;
-    //     yield {
-    //       visualisations: [{ type: "HIGHLIGHT_NODE", node: cur }],
-    //       highlightedLines: [7]
-    //     };
-    //     for (const link of graph.getLinksFromNode(cur.id)) {
-    //       if (
-    //         pred[link.target.id] === undefined &&
-    //         link.target.id !== sourceNode.id &&
-    //         link.capacity > link.flow
-    //       ) {
-    //         yield {
-    //           visualisations: [
-    //             {
-    //               type: "HIGHLIGHT_NODE",
-    //               node: graph.getNode(link.target.id)!
-    //             },
-    //             { type: "HIGHLIGHT_LINK", link: link }
-    //           ],
-    //           highlightedLines: [10, 11]
-    //         };
-    //         pred[link.target.id] = link;
-    //         q.push(graph.getNode(link.target.id)!);
-    //       }
-    //     }
-    //   }
-    //   if (pred[sinkNode.id] !== undefined) {
-    //     // found an augmenting path
-    //     let df = Infinity;
-    //     let currentLink = pred[sinkNode.id];
-    //     while (currentLink !== undefined) {
-    //       df = Math.min(df, currentLink.capacity - currentLink.flow);
-    //       currentLink = pred[currentLink.source.id];
-    //     }
-
-    //     currentLink = pred[sinkNode.id];
-    //     while (currentLink !== undefined) {
-    //       const reverseCurrentLink = graph.getLink(
-    //         currentLink.target.id,
-    //         currentLink.source.id
-    //       )!;
-    //       currentLink.flow = currentLink.flow + df;
-    //       yield {
-    //         visualisations: [{ type: "HIGHLIGHT_LINK", link: currentLink }],
-    //         highlightedLines: [22]
-    //       };
-    //       reverseCurrentLink.flow = reverseCurrentLink.flow - df;
-    //       yield {
-    //         visualisations: [
-    //           { type: "HIGHLIGHT_LINK", link: reverseCurrentLink }
-    //         ],
-    //         highlightedLines: [23]
-    //       };
-    //       currentLink = pred[currentLink.source.id];
-    //     }
-    //     flow = flow + df;
-    //     if (df > 0) finalPred = pred;
-    //   }
-    // } while (pred[sinkNode.id] !== undefined);
-    // yield {
-    //   visualisations: Object.values(finalPred).map(link => ({
-    //     type: "HIGHLIGHT_LINK",
-    //     link
-    //   })),
-    //   highlightedLines: [28]
-    // };
-    // return flow;
+  },
+  cleanup: (vis: VisRef) => {
+    vis.cy.$(".graph-edge").data("flow", 0);
+    vis.cy.$(".highlighted").removeClass("highlighted");
   }
 };

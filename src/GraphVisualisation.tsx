@@ -42,6 +42,8 @@ const GraphVisualisation: React.FC<{
   const [cyMenus, setCyMenus] = useState([]);
   const [cyEdgehandles, setCyEdgehandles] = useState(null);
   const graphVisualisationRef = useRef<VisRef | null>(null);
+  const interactionDisabled = useRef<boolean>(false);
+  interactionDisabled.current = disableInteraction;
   useEffect(() => {
     new FontFaceObserver("KaTeX_Math").load().then(() => setReady(true));
   }, []);
@@ -75,19 +77,26 @@ const GraphVisualisation: React.FC<{
           style: {
             width: nodeSize,
             height: nodeSize,
+            content: (node: any) => `${node.data("label")}`,
             "text-valign": "center",
             "text-halign": "center",
             "font-family": "KaTeX_Math",
             // "background-color": "white",
             "border-width": 3,
             "border-color": "black",
-            content: (node: any) => `${node.data("label")}`,
-            "background-color": (node: any) =>
+            "border-style": (node: any) =>
               node.data().type === "source"
-                ? "green"
+                ? "double"
                 : node.data().type === "sink"
-                ? "red"
-                : "white"
+                ? "dashed"
+                : "solid",
+            "background-color": "white"
+          }
+        },
+        {
+          selector: ".graph-node.highlighted",
+          style: {
+            "border-color": "gold"
           }
         },
         {
@@ -108,6 +117,13 @@ const GraphVisualisation: React.FC<{
               typeof edge.data("capacity") === "number"
                 ? ` ${edge.data("flow")}/${edge.data("capacity")} `
                 : ""
+          }
+        },
+        {
+          selector: ".graph-edge.highlighted",
+          style: {
+            "line-color": "gold",
+            "target-arrow-color": "gold"
           }
         },
         {
@@ -191,7 +207,7 @@ const GraphVisualisation: React.FC<{
     setCyEdgehandles(edgehandles);
 
     cy.on("tap", (evt: cytoscape.EventObject) => {
-      if (evt.target !== cy) return; // only handle taps on background
+      if (evt.target !== cy || interactionDisabled.current) return; // only handle taps on background
       // @ts-ignore
       cy.add([
         {
@@ -277,7 +293,7 @@ const GraphVisualisation: React.FC<{
               showCancelButton: true
             });
             value = parseInt(value, 10);
-            edge.data("capacity", value);
+            if (!isNaN(value)) edge.data("capacity", value);
           }
         }
       ]
