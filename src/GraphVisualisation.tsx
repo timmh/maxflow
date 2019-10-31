@@ -10,9 +10,14 @@ import "./cytoscape-cola.d";
 import edgehandles from "cytoscape-edgehandles";
 import "./cytoscape-edgehandles.d";
 import FontFaceObserver from "fontfaceobserver";
+import cxtmenu from "cytoscape-cxtmenu";
+import Swal from "sweetalert2";
 
 cytoscape.use(cola);
 cytoscape.use(edgehandles);
+cytoscape.use(cxtmenu);
+
+const nodeSize = 50;
 
 export type Visualisation =
   | {
@@ -43,7 +48,7 @@ const GraphVisualisation: React.FC<{
       animate: false,
       // @ts-ignore
       ungrabifyWhileSimulating: true,
-      edgeLength: 150
+      edgeLength: 3 * nodeSize
       // @ts-ignore
       // infinite: true,
       // fit: false
@@ -54,16 +59,28 @@ const GraphVisualisation: React.FC<{
     layout.run();
     // @ts-ignore
     cy.edgehandles({
+      preview: false,
+      handleNodes: ".graph-node",
       edgeParams: (sourceNode: any, targetNode: any, i: any) => ({
         data: {
           flow: 0,
           capacity: 0
         },
         classes: ["graph-edge"]
-      })
+      }),
+      edgeType: (sourceNode: any, targetNode: any) =>
+        sourceNode.outgoers().intersection(targetNode).length > 0
+          ? null
+          : "flat",
+      complete: (sourceNode: any, targetNode: any, addedEles: any) => {
+        // console.log(addedEles);
+        // // @ts-ignore
+        // addedEls.forEach(addedEle => addedEle.removeClass("eh-preview"));
+      }
     });
 
-    cy.on("tap", function(e) {
+    cy.on("tap", evt => {
+      if (evt.target !== cy) return; // only handle taps on background
       // @ts-ignore
       cy.add([
         {
@@ -71,11 +88,87 @@ const GraphVisualisation: React.FC<{
           data: { label: "X", type: "default" },
           classes: ["graph-node"],
           renderedPosition: {
-            x: e.renderedPosition.x,
-            y: e.renderedPosition.y
+            x: evt.renderedPosition.x,
+            y: evt.renderedPosition.y
           }
         }
       ]);
+    });
+
+    // cy.on("tap", ".graph-node", evt => {
+    //   // @ts-ignore
+    //   evt.target.remove();
+    // });
+
+    // cy.on("tap", ".graph-edge", evt => {
+    //   // @ts-ignore
+    //   evt.target.remove();
+    // });
+
+    // @ts-ignore
+    cy.cxtmenu({
+      menuRadius: 2 * nodeSize,
+      selector: ".graph-node",
+      commands: [
+        {
+          content: "Remove",
+          select: (node: cytoscape.NodeSingular) => node.remove()
+        },
+        {
+          content: "Rename",
+          select: async (node: cytoscape.NodeSingular) => {
+            const { value } = await Swal.fire({
+              input: "text",
+              inputValue: node.data("label"),
+              title: "Rename",
+              showCancelButton: true
+            });
+            if (value) node.data("label", value);
+          }
+        },
+        {
+          content: "Change Type",
+          select: async (node: cytoscape.NodeSingular) => {
+            const { value } = await Swal.fire({
+              title: "Change Type",
+              input: "select",
+              inputOptions: {
+                default: "Default",
+                source: "Source",
+                sink: "Sink"
+              },
+              inputValue: node.data("type"),
+              showCancelButton: true
+            });
+            if (value) node.data("type", value);
+          }
+        }
+      ]
+    });
+
+    // @ts-ignore
+    cy.cxtmenu({
+      menuRadius: 2 * nodeSize,
+      selector: ".graph-edge",
+      commands: [
+        {
+          content: "Remove",
+          select: (edge: cytoscape.EdgeSingular) => edge.remove()
+        },
+        {
+          content: "Change Capacity",
+          select: async (edge: cytoscape.EdgeSingular) => {
+            let { value } = await Swal.fire({
+              input: "number",
+              inputValue: edge.data("capacity"),
+              title: "Change Capacity",
+              showCancelButton: true
+            });
+            value = parseInt(value, 10);
+            edge.data("capacity", value);
+          }
+        }
+      ]
     });
   }, [cy, ready]);
 
@@ -103,23 +196,27 @@ const GraphVisualisation: React.FC<{
       cy={(nextCy: cytoscape.Core) => {
         if (nextCy !== cy) setCy(nextCy);
       }}
-      style={{ width: "600px", height: "600px" }}
+      className="graph-visualisation"
+      // style={{ width: "600px", height: "600px" }}
       stylesheet={[
         {
           selector: ".graph-node",
           style: {
-            width: 40,
-            height: 40,
+            width: nodeSize,
+            height: nodeSize,
             "text-valign": "center",
             "text-halign": "center",
             "font-family": "KaTeX_Math",
-            "background-color": "white",
+            // "background-color": "white",
             "border-width": 3,
             "border-color": "black",
-            content: (node: any) => `${node.data("label")}`
-            // "background-color": (node: Node) =>
-            //   // @ts-ignore
-            //   node.data().type === "sink" ? "green" : "red"
+            content: (node: any) => `${node.data("label")}`,
+            "background-color": (node: any) =>
+              node.data().type === "source"
+                ? "green"
+                : node.data().type === "sink"
+                ? "red"
+                : "white"
           }
         },
         {
@@ -139,7 +236,7 @@ const GraphVisualisation: React.FC<{
               typeof edge.data("flow") === "number" &&
               typeof edge.data("capacity") === "number"
                 ? ` ${edge.data("flow")}/${edge.data("capacity")} `
-                : undefined
+                : ""
           }
         },
         {
