@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import useComponentSize from "@rehooks/component-size";
 import "d3-selection-multi";
-import FlowGraph, { FlowLink, Node } from "./FlowGraph";
 import cytoscape from "cytoscape";
 import cola from "cytoscape-cola";
 import "./cytoscape-cola.d";
@@ -17,25 +15,49 @@ cytoscape.use(cxtmenu);
 
 const nodeSize = 50;
 
-export type Visualisation =
-  | {
-      type: "HIGHLIGHT_LINK";
-      link: FlowLink;
-    }
-  | {
-      type: "HIGHLIGHT_NODE";
-      node: Node;
-    };
+const defaultNodes = [
+  { id: "A", type: "source", title: "A" },
+  { id: "B", type: "default", title: "B" },
+  { id: "C", type: "default", title: "C" },
+  { id: "D", type: "default", title: "D" },
+  { id: "E", type: "default", title: "E" },
+  { id: "F", type: "default", title: "F" },
+  { id: "G", type: "sink", title: "G" }
+];
+
+const defaultEdges = [
+  { source: { id: "A" }, target: { id: "B" }, capacity: 3, flow: 0 },
+  { source: { id: "B" }, target: { id: "A" }, capacity: 0, flow: 0 },
+  { source: { id: "A" }, target: { id: "D" }, capacity: 3, flow: 0 },
+  { source: { id: "D" }, target: { id: "A" }, capacity: 0, flow: 0 },
+  { source: { id: "B" }, target: { id: "C" }, capacity: 4, flow: 0 },
+  { source: { id: "C" }, target: { id: "B" }, capacity: 0, flow: 0 },
+  { source: { id: "C" }, target: { id: "A" }, capacity: 3, flow: 0 },
+  { source: { id: "A" }, target: { id: "C" }, capacity: 0, flow: 0 },
+  { source: { id: "C" }, target: { id: "D" }, capacity: 1, flow: 0 },
+  { source: { id: "D" }, target: { id: "C" }, capacity: 0, flow: 0 },
+  { source: { id: "C" }, target: { id: "E" }, capacity: 2, flow: 0 },
+  { source: { id: "E" }, target: { id: "C" }, capacity: 0, flow: 0 },
+  { source: { id: "D" }, target: { id: "E" }, capacity: 2, flow: 0 },
+  { source: { id: "E" }, target: { id: "D" }, capacity: 0, flow: 0 },
+  { source: { id: "D" }, target: { id: "F" }, capacity: 6, flow: 0 },
+  { source: { id: "F" }, target: { id: "D" }, capacity: 0, flow: 0 },
+  { source: { id: "E" }, target: { id: "B" }, capacity: 1, flow: 0 },
+  { source: { id: "B" }, target: { id: "E" }, capacity: 0, flow: 0 },
+  { source: { id: "E" }, target: { id: "G" }, capacity: 1, flow: 0 },
+  { source: { id: "G" }, target: { id: "E" }, capacity: 0, flow: 0 },
+  { source: { id: "F" }, target: { id: "G" }, capacity: 9, flow: 0 },
+  { source: { id: "G" }, target: { id: "F" }, capacity: 0, flow: 0 }
+];
 
 export interface VisRef {
   cy: cytoscape.Core;
 }
 
 const GraphVisualisation: React.FC<{
-  graph: FlowGraph;
   visRef: (visRef: VisRef) => void;
   disableInteraction: boolean;
-}> = ({ graph, visRef, disableInteraction }) => {
+}> = ({ visRef, disableInteraction }) => {
   const [ready, setReady] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   let [cy, setCy] = useState<cytoscape.Core | null>(null);
@@ -51,12 +73,12 @@ const GraphVisualisation: React.FC<{
   useEffect(() => {
     if (!ready || !containerRef.current) return;
 
-    const nodes = graph.nodes.map(node => ({
+    const nodes = defaultNodes.map(node => ({
       group: "nodes",
       data: { id: node.id, label: node.title, type: node.type },
       classes: ["graph-node"]
     }));
-    const edges = graph.links.map(edge => ({
+    const edges = defaultEdges.map(edge => ({
       group: "edges",
       data: {
         source: edge.source.id,

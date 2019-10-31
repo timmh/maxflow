@@ -1,8 +1,5 @@
-import FlowGraph, { FlowLink } from "../FlowGraph";
-import { Visualisation, VisRef } from "../GraphVisualisation";
+import { VisRef } from "../GraphVisualisation";
 import { EdgeSingular } from "cytoscape";
-
-const resetHighlighted = (cy: any) => {};
 
 export default {
   name: "Edmonds-Karp",
