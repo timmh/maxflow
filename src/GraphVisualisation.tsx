@@ -8,6 +8,9 @@ import "./cytoscape-edgehandles.d";
 import FontFaceObserver from "fontfaceobserver";
 import cxtmenu from "cytoscape-cxtmenu";
 import Swal from "sweetalert2";
+import pako from "pako";
+import { pick } from "lodash";
+import defaultHash from "./utils/defaultHash";
 
 cytoscape.use(cola);
 cytoscape.use(edgehandles);
@@ -15,44 +18,33 @@ cytoscape.use(cxtmenu);
 
 const nodeSize = 50;
 
-const defaultNodes = [
-  { id: "A", type: "source", title: "A" },
-  { id: "B", type: "default", title: "B" },
-  { id: "C", type: "default", title: "C" },
-  { id: "D", type: "default", title: "D" },
-  { id: "E", type: "default", title: "E" },
-  { id: "F", type: "default", title: "F" },
-  { id: "G", type: "sink", title: "G" }
-];
-
-const defaultEdges = [
-  { source: { id: "A" }, target: { id: "B" }, capacity: 3, flow: 0 },
-  { source: { id: "B" }, target: { id: "A" }, capacity: 0, flow: 0 },
-  { source: { id: "A" }, target: { id: "D" }, capacity: 3, flow: 0 },
-  { source: { id: "D" }, target: { id: "A" }, capacity: 0, flow: 0 },
-  { source: { id: "B" }, target: { id: "C" }, capacity: 4, flow: 0 },
-  { source: { id: "C" }, target: { id: "B" }, capacity: 0, flow: 0 },
-  { source: { id: "C" }, target: { id: "A" }, capacity: 3, flow: 0 },
-  { source: { id: "A" }, target: { id: "C" }, capacity: 0, flow: 0 },
-  { source: { id: "C" }, target: { id: "D" }, capacity: 1, flow: 0 },
-  { source: { id: "D" }, target: { id: "C" }, capacity: 0, flow: 0 },
-  { source: { id: "C" }, target: { id: "E" }, capacity: 2, flow: 0 },
-  { source: { id: "E" }, target: { id: "C" }, capacity: 0, flow: 0 },
-  { source: { id: "D" }, target: { id: "E" }, capacity: 2, flow: 0 },
-  { source: { id: "E" }, target: { id: "D" }, capacity: 0, flow: 0 },
-  { source: { id: "D" }, target: { id: "F" }, capacity: 6, flow: 0 },
-  { source: { id: "F" }, target: { id: "D" }, capacity: 0, flow: 0 },
-  { source: { id: "E" }, target: { id: "B" }, capacity: 1, flow: 0 },
-  { source: { id: "B" }, target: { id: "E" }, capacity: 0, flow: 0 },
-  { source: { id: "E" }, target: { id: "G" }, capacity: 1, flow: 0 },
-  { source: { id: "G" }, target: { id: "E" }, capacity: 0, flow: 0 },
-  { source: { id: "F" }, target: { id: "G" }, capacity: 9, flow: 0 },
-  { source: { id: "G" }, target: { id: "F" }, capacity: 0, flow: 0 }
-];
-
 export interface VisRef {
   cy: cytoscape.Core;
 }
+
+const graphToHash = (cy: cytoscape.Core) => {
+  let exp = JSON.parse(JSON.stringify(cy.json()));
+  exp = pick(exp, ["elements", "pan", "zoom"]);
+  exp.elements = {
+    nodes: exp.elements.nodes.map((node: object) =>
+      pick(node, ["classes", "data", "group", "position"])
+    ),
+    edges: exp.elements.edges.map((edge: object) =>
+      pick(edge, ["classes", "data", "group"])
+    )
+  };
+  exp = JSON.stringify(exp);
+  exp = btoa(pako.deflate(exp, { to: "string" }));
+  exp = `#${encodeURIComponent(exp)}`;
+  return exp;
+};
+
+const hashToGraph = (hash: string) => {
+  if (!hash.startsWith("#")) throw new Error("invalid hash");
+  let imp = decodeURIComponent(hash.substr(1));
+  imp = pako.inflate(atob(imp), { to: "string" });
+  return JSON.parse(imp);
+};
 
 const GraphVisualisation: React.FC<{
   visRef: (visRef: VisRef) => void;
@@ -73,26 +65,10 @@ const GraphVisualisation: React.FC<{
   useEffect(() => {
     if (!ready || !containerRef.current) return;
 
-    const nodes = defaultNodes.map(node => ({
-      group: "nodes",
-      data: { id: node.id, label: node.title, type: node.type },
-      classes: ["graph-node"]
-    }));
-    const edges = defaultEdges.map(edge => ({
-      group: "edges",
-      data: {
-        source: edge.source.id,
-        target: edge.target.id,
-        flow: edge.flow,
-        capacity: edge.capacity
-      },
-      classes: ["graph-edge"]
-    }));
-
     // @ts-ignore
     cy = cytoscape({
+      ...hashToGraph(window.location.hash || defaultHash),
       container: containerRef.current,
-      elements: [...nodes, ...edges],
       style: [
         {
           selector: ".graph-node",
@@ -206,7 +182,8 @@ const GraphVisualisation: React.FC<{
       animate: false,
       // @ts-ignore
       ungrabifyWhileSimulating: true,
-      edgeLength: 3 * nodeSize
+      edgeLength: 3 * nodeSize,
+      randomize: true
     });
     layout.run();
     // @ts-ignore
@@ -243,6 +220,18 @@ const GraphVisualisation: React.FC<{
         }
       ]);
     });
+
+    cy.on("add remove move dragfree data", ".graph-node, .graph-edge", () => {
+      if (!cy) return;
+
+      const exp = graphToHash(cy);
+      if (window.history.pushState) {
+        window.history.replaceState(null, document.title, exp);
+      } else {
+        window.location.hash = exp;
+      }
+    });
+
     enableMenus();
     setCy(cy);
     const nextGraphVisualisationRef: VisRef = { cy };
