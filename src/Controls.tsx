@@ -35,7 +35,10 @@ const Controls: React.FC<{
       <button
         title="Step Forward"
         className="controls__button"
-        onClick={() => stepForward()}
+        onClick={() => {
+          setState("manual");
+          stepForward();
+        }}
         disabled={state === "auto"}
       >
         <FontAwesomeIcon size="2x" icon={faStepForward} />
