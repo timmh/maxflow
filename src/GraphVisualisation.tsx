@@ -20,18 +20,22 @@ const nodeSize = 50;
 
 export interface VisRef {
   cy: cytoscape.Core;
+  layout: cytoscape.Layouts;
+  resetLayout: () => void;
 }
 
 const graphToHash = (cy: cytoscape.Core) => {
   let exp = JSON.parse(JSON.stringify(cy.json()));
   exp = pick(exp, ["elements", "pan", "zoom"]);
   exp.elements = {
-    nodes: exp.elements.nodes.map((node: object) =>
-      pick(node, ["classes", "data", "group", "position"])
-    ),
-    edges: exp.elements.edges.map((edge: object) =>
-      pick(edge, ["classes", "data", "group"])
-    )
+    nodes: exp.elements.nodes
+      .filter((node: any) => node.classes === "graph-node")
+      .map((node: object) =>
+        pick(node, ["classes", "data", "group", "position"])
+      ),
+    edges: exp.elements.edges
+      .filter((edge: any) => edge.classes === "graph-edge")
+      .map((edge: object) => pick(edge, ["classes", "data", "group"]))
   };
   exp = JSON.stringify(exp);
   exp = btoa(pako.deflate(exp, { to: "string" }));
@@ -44,6 +48,49 @@ const hashToGraph = (hash: string) => {
   let imp = decodeURIComponent(hash.substr(1));
   imp = pako.inflate(atob(imp), { to: "string" });
   return JSON.parse(imp);
+};
+
+// TODO: still not correct after Z
+const getNewNodeLabel = (cy: cytoscape.Core) => {
+  return String.fromCharCode(
+    "A".charCodeAt(0) + Math.random() * ("Z".charCodeAt(0) - "A".charCodeAt(0))
+  );
+
+  const aCharCode = "a".charCodeAt(0);
+  const zCharCode = "z".charCodeAt(0);
+  const range = zCharCode - aCharCode + 1;
+  const existingLabels = cy.nodes(".graph-node").map(node => {
+    return node
+      .data("label")
+      .toString()
+      .toLowerCase()
+      .split("")
+      .map((c: string) => c.charCodeAt(0) - aCharCode)
+      .reduce(
+        (acc: number, charCode: number, i: number) =>
+          acc + Math.pow(range, i) * charCode,
+        0
+      );
+  });
+  existingLabels.sort();
+  let i = 0;
+  while (existingLabels.includes(i)) {
+    i++;
+  }
+  const newLabelChars = [];
+  for (let e = Math.floor(Math.pow(i, 1 / range)); e >= 0; e--) {
+    const value = i % Math.pow(range, e);
+    if (value > 0 || newLabelChars.length > 0) newLabelChars.push(value);
+    i = Math.ceil(i / Math.pow(range, e));
+  }
+  newLabelChars.reverse();
+
+  const newLabel = newLabelChars
+    .map(c => String.fromCharCode(c + aCharCode))
+    .join("")
+    .toUpperCase();
+
+  return newLabel;
 };
 
 const GraphVisualisation: React.FC<{
@@ -176,16 +223,28 @@ const GraphVisualisation: React.FC<{
 
     if (!cy) return;
 
-    const layout = cy.layout({
-      name: "cola",
-      // @ts-ignore
-      animate: false,
-      // @ts-ignore
-      ungrabifyWhileSimulating: true,
-      edgeLength: 3 * nodeSize,
-      randomize: true
-    });
-    layout.run();
+    // @ts-ignore
+    let layout: cytoscape.Layouts = null;
+    const resetLayout = () => {
+      if (layout !== null) {
+        layout.stop();
+      }
+      layout = cy!.layout({
+        name: "cola",
+        // @ts-ignore
+        // animate: false,
+        // @ts-ignore
+        // ungrabifyWhileSimulating: true,
+        edgeLength: 3 * nodeSize,
+        randomize: false,
+        infinite: true,
+        fit: false,
+        handleDisconnected: true
+      });
+      layout.run();
+    };
+    resetLayout();
+
     // @ts-ignore
     const edgehandles = cy.edgehandles({
       preview: false,
@@ -200,29 +259,41 @@ const GraphVisualisation: React.FC<{
       edgeType: (sourceNode: any, targetNode: any) =>
         sourceNode.outgoers().intersection(targetNode).length > 0
           ? null
-          : "flat"
+          : "flat",
+      complete: (a: any, b: any, addedEles: any) => {
+        resetLayout();
+      }
     });
 
     setCyEdgehandles(edgehandles);
 
-    cy.on("tap", (evt: cytoscape.EventObject) => {
-      if (evt.target !== cy || interactionDisabled.current) return; // only handle taps on background
+    cy.on("mouseover", ".graph-node", evt => {
+      layout.stop();
+    });
+
+    cy.on("mouseout", ".graph-node", evt => {
+      layout.start();
+    });
+
+    cy.on("tap", evt => {
+      if (!cy || evt.target !== cy || interactionDisabled.current) return; // only handle taps on background
       // @ts-ignore
       cy.add([
         {
           group: "nodes",
-          data: { label: "X", type: "default" },
-          classes: ["graph-node"],
+          data: { label: getNewNodeLabel(cy), type: "default" },
+          classes: "graph-node",
           renderedPosition: {
             x: evt.renderedPosition.x,
             y: evt.renderedPosition.y
           }
         }
       ]);
+      resetLayout();
     });
 
     cy.on("add remove move dragfree data", ".graph-node, .graph-edge", () => {
-      if (!cy) return;
+      if (!cy || interactionDisabled.current) return;
 
       const exp = graphToHash(cy);
       if (window.history.pushState) {
@@ -234,7 +305,7 @@ const GraphVisualisation: React.FC<{
 
     enableMenus();
     setCy(cy);
-    const nextGraphVisualisationRef: VisRef = { cy };
+    const nextGraphVisualisationRef: VisRef = { cy, layout, resetLayout };
     if (!graphVisualisationRef.current) {
       graphVisualisationRef.current = nextGraphVisualisationRef;
     } else {
