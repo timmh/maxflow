@@ -116,6 +116,9 @@ const GraphVisualisation: React.FC<{
     cy = cytoscape({
       ...hashToGraph(window.location.hash || defaultHash),
       container: containerRef.current,
+      boxSelectionEnabled: false,
+      minZoom: 0.5,
+      maxZoom: 5,
       style: [
         {
           selector: ".graph-node",
@@ -239,7 +242,7 @@ const GraphVisualisation: React.FC<{
         randomize: false,
         infinite: true,
         fit: false,
-        handleDisconnected: true
+        handleDisconnected: false
       });
       layout.run();
     };
