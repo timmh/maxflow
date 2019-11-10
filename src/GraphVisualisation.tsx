@@ -51,47 +51,10 @@ const hashToGraph = (hash: string) => {
 };
 
 // TODO: still not correct after Z
-const getNewNodeLabel = (cy: cytoscape.Core) => {
-  return String.fromCharCode(
+const getNewNodeLabel = (cy: cytoscape.Core) =>
+  String.fromCharCode(
     "A".charCodeAt(0) + Math.random() * ("Z".charCodeAt(0) - "A".charCodeAt(0))
   );
-
-  const aCharCode = "a".charCodeAt(0);
-  const zCharCode = "z".charCodeAt(0);
-  const range = zCharCode - aCharCode + 1;
-  const existingLabels = cy.nodes(".graph-node").map(node => {
-    return node
-      .data("label")
-      .toString()
-      .toLowerCase()
-      .split("")
-      .map((c: string) => c.charCodeAt(0) - aCharCode)
-      .reduce(
-        (acc: number, charCode: number, i: number) =>
-          acc + Math.pow(range, i) * charCode,
-        0
-      );
-  });
-  existingLabels.sort();
-  let i = 0;
-  while (existingLabels.includes(i)) {
-    i++;
-  }
-  const newLabelChars = [];
-  for (let e = Math.floor(Math.pow(i, 1 / range)); e >= 0; e--) {
-    const value = i % Math.pow(range, e);
-    if (value > 0 || newLabelChars.length > 0) newLabelChars.push(value);
-    i = Math.ceil(i / Math.pow(range, e));
-  }
-  newLabelChars.reverse();
-
-  const newLabel = newLabelChars
-    .map(c => String.fromCharCode(c + aCharCode))
-    .join("")
-    .toUpperCase();
-
-  return newLabel;
-};
 
 const GraphVisualisation: React.FC<{
   visRef: (visRef: VisRef) => void;
@@ -323,6 +286,7 @@ const GraphVisualisation: React.FC<{
       if (!cy || interactionDisabled.current) return;
 
       const exp = graphToHash(cy);
+      // @ts-ignore
       if (window.history.pushState) {
         window.history.replaceState(null, document.title, exp);
       } else {

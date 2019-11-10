@@ -48,7 +48,7 @@ const tgf2cyto = (tgf: String) => {
         (otherEdge: any) =>
           edge.data.source === edge.data.target &&
           edge.data.target === edge.data.source
-      ).length == 0
+      ).length === 0
     ) {
       edges.push({
         data: {

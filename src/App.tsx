@@ -70,15 +70,6 @@ const App: React.FC = () => {
     [algorithmImplementationInstance, algorithmState]
   );
 
-  const importGraph = (tgf: String) => {
-    if (!visRef) return;
-
-    const elements = tgf2cyto(tgf);
-
-    visRef.cy.json({ elements });
-    visRef.resetLayout();
-  };
-
   const onDrop = useCallback(
     (acceptedFiles: Blob[]) => {
       if (acceptedFiles.length !== 1) {
@@ -105,7 +96,9 @@ const App: React.FC = () => {
           Swal.fire("Error", "File reading has failed", "error");
         } else {
           try {
-            importGraph(reader.result);
+            const elements = tgf2cyto(reader.result);
+            visRef!.cy.json({ elements });
+            visRef!.resetLayout();
           } catch (err) {
             Swal.fire("Error", `Parsing error: ${err.toString()}`, "error");
           }
@@ -115,7 +108,7 @@ const App: React.FC = () => {
     },
     [algorithmState, visRef]
   );
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   if (algorithm === null) return null;
 
