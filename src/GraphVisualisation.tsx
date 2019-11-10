@@ -257,13 +257,37 @@ const GraphVisualisation: React.FC<{
           flow: 0,
           capacity: 0
         },
-        classes: ["graph-edge"]
+        classes: "graph-edge"
       }),
       edgeType: (sourceNode: any, targetNode: any) =>
         sourceNode.outgoers().intersection(targetNode).length > 0
           ? null
           : "flat",
       complete: (a: any, b: any, addedEles: any) => {
+        addedEles
+          .filter((element: any) => element.hasClass("graph-edge"))
+          .forEach((edge: any) => {
+            if (
+              cy!
+                .edges(".graph-edges")
+                .filter(
+                  otherEdge =>
+                    otherEdge.data("source") === edge.data("target") &&
+                    otherEdge.data("target") === edge.data("source")
+                ).length === 0
+            ) {
+              cy!.add({
+                data: {
+                  source: edge.data("target"),
+                  target: edge.data("source"),
+                  flow: 0,
+                  capacity: 0
+                },
+                group: "edges",
+                classes: "graph-edge"
+              });
+            }
+          });
         resetLayout();
       }
     });
