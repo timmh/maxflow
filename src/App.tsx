@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import GraphVisualisation, { VisRef } from "./GraphVisualisation";
 import "./App.scss";
 import Pseudocode from "./Pseudocode";
+import QueueVisualization from "./QueueVisualization";
 import Controls from "./Controls";
 import useInterval from "./utils/useInterval";
 import { useDropzone } from "react-dropzone";
@@ -28,11 +29,13 @@ const App: React.FC = () => {
     setAlgorithmImplementationInstance
   ] = useState<Generator<{
     highlightedLines: number[];
+    queueElements: any[];
   }> | null>(null);
   const [algorithmState, setAlgorithmState] = useState<
     "stopped" | "auto" | "manual"
   >("stopped");
   const [highlightedLines, setHighlightedLines] = useState<number[]>([]);
+  const [queueElements, setQueueElements] = useState<any[]>([]);
   const [visRef, setVisRef] = useState<VisRef | null>(null);
 
   useEffect(() => {
@@ -46,16 +49,19 @@ const App: React.FC = () => {
     const result = algorithmImplementationInstance.next();
     if (!result || result.done) {
       setAlgorithmState("stopped");
-      // setHighlightedLines([]);
+      // if (highlightedLines) setHighlightedLines(highlightedLines);
+      // if (queueElements) setQueueElements(queueElements);
     } else {
-      const { highlightedLines } = result.value;
-      setHighlightedLines(highlightedLines);
+      const { highlightedLines, queueElements } = result.value;
+      if (highlightedLines) setHighlightedLines(highlightedLines);
+      if (queueElements) setQueueElements(queueElements);
     }
   };
 
   const reset = () => {
     setAlgorithmState("stopped");
     setHighlightedLines([]);
+    setQueueElements([]);
     if (algorithm && visRef) {
       algorithm.cleanup(visRef);
       setAlgorithmImplementationInstance(algorithm.implementation(visRef));
@@ -122,6 +128,7 @@ const App: React.FC = () => {
           }}
           disableInteraction={algorithmState !== "stopped"}
         />
+        <QueueVisualization elements={queueElements} />
       </div>
       <div className="app__right">
         <Controls

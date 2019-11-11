@@ -10,7 +10,7 @@ export default {
         \STATE $f = 0$
         \REPEAT
             \STATE $p = \left[\ \right]$
-            \STATE $q = \left[\ \right]$
+            \STATE $q = \left[\ s\ \right]$
             \WHILE{$q_\mathrm{length}$ = 0}
                 \STATE $c =$ \CALL{dequeue}{$q$}
                 \FOR{edge $e$ originating from $c$}
@@ -42,6 +42,7 @@ export default {
     vis: VisRef
   ): IterableIterator<{
     highlightedLines: number[];
+    queueElements?: any[];
   }> {
     const sourceNode = vis.cy.nodes('node[type="source"]')[0];
     const sinkNode = vis.cy.nodes('node[type="sink"]')[0];
@@ -55,15 +56,28 @@ export default {
     // let finalPred: { [key: string]: FlowLink } = {};
 
     do {
+      vis.cy.$(".highlighted").removeClass("highlighted");
       const q = [sourceNode];
       pred = {};
 
+      yield {
+        highlightedLines: [4, 5],
+        queueElements: q.map(e => ({
+          label: e.data("label"),
+          type: e.data("type")
+        }))
+      };
+
       while (q.length > 0) {
         const cur: cytoscape.NodeSingular = q.shift()!;
-        vis.cy.$(".highlighted").removeClass("highlighted");
+        // vis.cy.$(".highlighted").removeClass("highlighted");
         cur.addClass("highlighted");
         yield {
-          highlightedLines: [7]
+          highlightedLines: [7],
+          queueElements: q.map(e => ({
+            label: e.data("label"),
+            type: e.data("type")
+          }))
         };
         for (let link of cur!.outgoers("edge").toArray() as EdgeSingular[]) {
           if (
@@ -71,10 +85,15 @@ export default {
             link.target().id() !== sourceNode.id() &&
             link.data("capacity") > link.data("flow")
           ) {
-            vis.cy.$(".highlighted").removeClass("highlighted");
+            // vis.cy.$(".highlighted").removeClass("highlighted");
+            link.addClass("highlighted");
             link.target().addClass("highlighted");
             yield {
-              highlightedLines: [10, 11]
+              highlightedLines: [10, 11],
+              queueElements: q.map(e => ({
+                label: e.data("label"),
+                type: e.data("type")
+              }))
             };
             pred[link.target().id()] = link;
             q.push(link.target());
@@ -83,6 +102,25 @@ export default {
       }
       if (pred[sinkNode.id()] !== undefined) {
         // found an augmenting path
+
+        vis.cy.$(".highlighted").removeClass("highlighted");
+
+        let currentHighlightEdge = pred[sinkNode.id()];
+        while (currentHighlightEdge) {
+          currentHighlightEdge.addClass("highlighted");
+          currentHighlightEdge.source().addClass("highlighted");
+          currentHighlightEdge.target().addClass("highlighted");
+          currentHighlightEdge = pred[currentHighlightEdge.source().id()];
+        }
+
+        yield {
+          highlightedLines: [16],
+          queueElements: q.map(e => ({
+            label: e.data("label"),
+            type: e.data("type")
+          }))
+        };
+
         let df = Infinity;
         let currentLink = pred[sinkNode.id()];
         while (currentLink !== undefined) {
@@ -102,13 +140,21 @@ export default {
           vis.cy.$(".highlighted").removeClass("highlighted");
           currentLink.addClass("highlighted");
           yield {
-            highlightedLines: [22]
+            highlightedLines: [22],
+            queueElements: q.map(e => ({
+              label: e.data("label"),
+              type: e.data("type")
+            }))
           };
           reverseCurrentLink.data("flow", reverseCurrentLink.data("flow") - df);
           vis.cy.$(".highlighted").removeClass("highlighted");
           reverseCurrentLink.addClass("highlighted");
           yield {
-            highlightedLines: [23]
+            highlightedLines: [23],
+            queueElements: q.map(e => ({
+              label: e.data("label"),
+              type: e.data("type")
+            }))
           };
           currentLink = pred[currentLink.source().id()];
         }

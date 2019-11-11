@@ -1,3 +1,5 @@
+@import "./variables.scss";
+
 .app {
   display: flex;
   flex-grow: 1;
@@ -6,6 +8,10 @@
 
   &__left {
     flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
   }
 
   &__right {
@@ -14,12 +20,62 @@
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
+    box-shadow: 5px 0 15px 0 $color-black;
   }
 }
 
 .graph-visualisation {
-  width: 100%;
-  height: 100%;
+  flex: 1;
+}
+
+.queue-visualization {
+  $size: 60px;
+  $border-size: 2px;
+  $border-color: $color-black;
+
+  display: flex;
+  align-items: center;
+  border-top: $border-size solid $border-color;
+
+  &__title {
+    font-family: KaTeX_Main;
+    margin: 0 1em;
+  }
+
+  &__elements {
+    height: $size;
+    flex: 1;
+    display: flex;
+    overflow-x: auto;
+  }
+
+  &__element {
+    width: $size;
+    height: $size;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-right: $border-size solid $border-color;
+    &:first-child {
+      border-left: $border-size solid $border-color;
+    }
+  }
+
+  &__label {
+    width: 0.75 * $size;
+    height: 0.75 * $size;
+    line-height: 0.75 * $size;
+    border-radius: 100%;
+    text-align: center;
+    font-family: KaTeX_Math;
+    border: $border-size solid $border-color;
+    &--type-source {
+      border-style: double;
+    }
+    &--type-sink {
+      border-style: dashed;
+    }
+  }
 }
 
 .controls {
@@ -40,6 +96,6 @@
 
 .pseudocode {
   .ps-line--highlighted {
-    background-color: gold;
+    background-color: $color-highlight;
   }
 }

@@ -11,6 +11,7 @@ import Swal from "sweetalert2";
 import pako from "pako";
 import { pick } from "lodash";
 import defaultHash from "./utils/defaultHash";
+import * as styleVariables from "./variables.scss";
 
 cytoscape.use(cola);
 cytoscape.use(edgehandles);
@@ -107,7 +108,7 @@ const GraphVisualisation: React.FC<{
         {
           selector: ".graph-node.highlighted",
           style: {
-            "border-color": "gold"
+            "border-color": styleVariables.colorHighlight
           }
         },
         {
@@ -133,14 +134,14 @@ const GraphVisualisation: React.FC<{
         {
           selector: ".graph-edge.highlighted",
           style: {
-            "line-color": "gold",
-            "target-arrow-color": "gold"
+            "line-color": styleVariables.colorHighlight,
+            "target-arrow-color": styleVariables.colorHighlight
           }
         },
         {
           selector: ".eh-handle",
           style: {
-            "background-color": "red",
+            "background-color": styleVariables.colorHandles,
             width: 12,
             height: 12,
             shape: "ellipse",
@@ -152,30 +153,30 @@ const GraphVisualisation: React.FC<{
         {
           selector: ".eh-hover",
           style: {
-            "background-color": "red"
+            "background-color": styleVariables.colorHandles
           }
         },
         {
           selector: ".eh-source",
           style: {
             "border-width": 2,
-            "border-color": "red"
+            "border-color": styleVariables.colorHandles
           }
         },
         {
           selector: ".eh-target",
           style: {
             "border-width": 2,
-            "border-color": "red"
+            "border-color": styleVariables.colorHandles
           }
         },
         {
           selector: ".eh-preview, .eh-ghost-edge",
           style: {
-            "background-color": "red",
-            "line-color": "red",
-            "target-arrow-color": "red",
-            "source-arrow-color": "red"
+            "background-color": styleVariables.colorHandles,
+            "line-color": styleVariables.colorHandles,
+            "target-arrow-color": styleVariables.colorHandles,
+            "source-arrow-color": styleVariables.colorHandles
           }
         },
         {

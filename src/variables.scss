@@ -1,0 +1,11 @@
+$color-black: #000000;
+$color-white: #ffffff;
+$color-highlight: #ffd700;
+$color-handles: #ff0000;
+
+:export {
+  colorBlack: $color-black;
+  colorWhite: $color-white;
+  colorHighlight: $color-highlight;
+  colorHandles: $color-handles;
+}
