@@ -2,12 +2,13 @@
 
 .app {
   display: flex;
-  flex-grow: 1;
   align-items: stretch;
-  min-height: 100vh;
 
   &__left {
-    flex: 2;
+    height: 100vh;
+    min-height: 800px;
+    flex-grow: 2;
+    flex-shrink: 2;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -15,7 +16,10 @@
   }
 
   &__right {
-    flex: 1;
+    height: 100vh;
+    min-height: 800px;
+    flex-grow: 1;
+    flex-shrink: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
