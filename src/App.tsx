@@ -8,6 +8,7 @@ import useInterval from "./utils/useInterval";
 import { useDropzone } from "react-dropzone";
 import Swal from "sweetalert2";
 import { tgf2cyto } from "./utils/io";
+import assertValidGraph from "./utils/assertValidGraph";
 
 interface Algorithm {
   name: string;
@@ -45,7 +46,13 @@ const App: React.FC = () => {
   }, [algorithm, visRef]);
 
   const stepForward = () => {
-    if (!algorithmImplementationInstance) return;
+    if (!algorithmImplementationInstance || !visRef) return;
+    try {
+      assertValidGraph(visRef.cy);
+    } catch (err) {
+      Swal.fire("Error", err.toString(), "error");
+      return;
+    }
     const result = algorithmImplementationInstance.next();
     if (!result || result.done) {
       setAlgorithmState("stopped");
@@ -70,10 +77,19 @@ const App: React.FC = () => {
 
   useInterval(
     () => {
-      if (algorithmState === "auto") stepForward();
+      if (algorithmState === "auto" && visRef) {
+        try {
+          assertValidGraph(visRef.cy);
+        } catch (err) {
+          Swal.fire("Error", err.toString(), "error");
+          reset();
+          return;
+        }
+        stepForward();
+      }
     },
     1000,
-    [algorithmImplementationInstance, algorithmState]
+    [algorithmImplementationInstance, algorithmState, setAlgorithmState]
   );
 
   const onDrop = useCallback(
