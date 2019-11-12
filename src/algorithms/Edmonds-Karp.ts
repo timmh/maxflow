@@ -79,7 +79,16 @@ export default {
             type: e.data("type")
           }))
         };
-        for (let link of cur!.outgoers("edge").toArray() as EdgeSingular[]) {
+        for (let link of cur!
+          .outgoers("edge")
+          .sort((edge1, edge2) => {
+            const label1 = (edge1 as EdgeSingular).target().data("label");
+            const label2 = (edge2 as EdgeSingular).target().data("label");
+            if (label1 < label2) return -1;
+            if (label1 > label2) return 1;
+            return 0;
+          })
+          .toArray() as EdgeSingular[]) {
           if (
             pred[link.target().id()] === undefined &&
             link.target().id() !== sourceNode.id() &&
