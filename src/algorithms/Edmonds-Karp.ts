@@ -10,7 +10,7 @@ export default {
         \STATE $f = 0$
         \REPEAT
             \STATE $p = \left[\ \right]$
-            \STATE $q = \left[\ s\ \right]$
+            \STATE $q = \left[\ s\ \right]$ \COMMENT{create queue}
             \WHILE{$q_\mathrm{length}$ = 0}
                 \STATE $c =$ \CALL{dequeue}{$q$}
                 \FOR{edge $e$ originating from $c$}
@@ -38,6 +38,14 @@ export default {
     \end{algorithmic}
     \end{algorithm}
   `,
+  labeledBlocks: [
+    { lines: [4, 14], color: "#ffdcdc", label: "Breadth-first search" },
+    {
+      lines: [15, 26],
+      color: "#e3ffff",
+      label: "Increase flow along found path"
+    }
+  ],
   implementation: function*(
     vis: VisRef
   ): IterableIterator<{

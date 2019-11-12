@@ -105,7 +105,45 @@
 }
 
 .pseudocode {
-  .ps-line--highlighted {
-    background-color: $color-highlight;
+  position: relative;
+
+  .ps-line {
+    transition: 400ms ease background-color;
+  }
+
+  .ps-line::before {
+    content: "|";
+    color: transparent;
+    user-select: none;
+    position: absolute;
+    width: 100%;
+    display: inline-block;
+    left: 0;
+    background-color: var(--block-color);
+    z-index: -1;
+    line-height: 1.3;
+  }
+
+  @for $i from $highlighted-lines-count through 0 {
+    $highlight-color: rgba(
+      $color-highlight,
+      (1 - ($i) / ($highlighted-lines-count))
+    );
+    .ps-line--highlighted-#{$i}::before {
+      background: linear-gradient(var(--block-color), var(--block-color)),
+        linear-gradient($highlight-color, $highlight-color);
+      background-blend-mode: overlay;
+    }
+  }
+
+  .ps-line::after {
+    content: attr(data-block-label);
+    user-select: none;
+    font-family: KaTeX_Main;
+    position: absolute;
+    display: inline-block;
+    right: 0;
+    z-index: 1;
+    line-height: 1.3;
   }
 }

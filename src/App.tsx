@@ -11,10 +11,12 @@ import { tgf2cyto, cyto2tgf } from "./utils/io";
 import assertValidGraph from "./utils/assertValidGraph";
 import GraphControls from "./GraphControls";
 import FileSaver from "file-saver";
+import config from "./config";
 
 interface Algorithm {
   name: string;
   pseudocode: string;
+  labeledBlocks: { lines: [number, number]; color: string; label: string }[];
   implementation: (vis: VisRef) => Generator<never, void, unknown>;
   cleanup: (vis: VisRef) => void;
 }
@@ -37,7 +39,13 @@ const App: React.FC = () => {
   const [algorithmState, setAlgorithmState] = useState<
     "stopped" | "auto" | "manual"
   >("stopped");
-  const [highlightedLines, setHighlightedLines] = useState<number[]>([]);
+  const [highlightedLines, setHighlightedLines] = useState<number[][]>([]);
+  const queueHighlightedLines = (newHighlightedLines: number[]) => {
+    setHighlightedLines([
+      newHighlightedLines,
+      ...highlightedLines.slice(0, config.highlightedLinesCount - 1)
+    ]);
+  };
   const [queueElements, setQueueElements] = useState<any[]>([]);
   const [visRef, setVisRef] = useState<VisRef | null>(null);
   const [autoLayout, setAutoLayout] = useState(true);
@@ -63,7 +71,7 @@ const App: React.FC = () => {
       // if (queueElements) setQueueElements(queueElements);
     } else {
       const { highlightedLines, queueElements } = result.value;
-      if (highlightedLines) setHighlightedLines(highlightedLines);
+      if (highlightedLines) queueHighlightedLines(highlightedLines);
       if (queueElements) setQueueElements(queueElements);
     }
   };

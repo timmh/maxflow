@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from "react";
+import config from "./config";
 
 // pseudocode.js has no type definitions, therefore the interface is declared here
 declare global {
@@ -8,8 +9,11 @@ declare global {
 }
 
 const Pseudocode: React.FC<{
-  algorithm: { pseudocode: string };
-  highlightedLines: number[];
+  algorithm: {
+    pseudocode: string;
+    labeledBlocks: { lines: [number, number]; color: string; label: string }[];
+  };
+  highlightedLines: number[][];
 }> = ({ algorithm, highlightedLines }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -26,14 +30,43 @@ const Pseudocode: React.FC<{
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
+    el.querySelectorAll(".ps-line--highlighted").forEach(element => {
+      [...new Array(config.highlightedLinesCount).keys()].forEach(t => {
+        element.classList.remove(`ps-line--highlighted-${t}`);
+      });
+    });
     el.querySelectorAll(".ps-line").forEach((line, i) => {
-      if (highlightedLines.includes(i + 1)) {
-        line.classList.add("ps-line--highlighted");
-      } else {
-        line.classList.remove("ps-line--highlighted");
-      }
+      highlightedLines.forEach((highlightedLines, t) => {
+        const className = `ps-line--highlighted-${t}`;
+        if (highlightedLines.includes(i + 1)) {
+          line.classList.add(className);
+        } else {
+          line.classList.remove(className);
+        }
+      });
     });
   }, [algorithm, highlightedLines]);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    el.querySelectorAll(".ps-line").forEach((line, i) => {
+      algorithm.labeledBlocks.forEach(labeledBlock => {
+        if (i + 1 === labeledBlock.lines[0]) {
+          (line as HTMLElement).setAttribute(
+            "data-block-label",
+            `// ${labeledBlock.label}`
+          );
+        }
+        if (i + 1 >= labeledBlock.lines[0] && i < labeledBlock.lines[1]) {
+          (line as HTMLElement).style.setProperty(
+            "--block-color",
+            labeledBlock.color
+          );
+        }
+      });
+    });
+  }, [algorithm]);
 
   return (
     <div className="pseudocode">
