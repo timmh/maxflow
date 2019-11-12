@@ -31,9 +31,7 @@ const graphToHash = (cy: cytoscape.Core) => {
   exp.elements = {
     nodes: exp.elements.nodes
       .filter((node: any) => node.classes === "graph-node")
-      .map((node: object) =>
-        pick(node, ["classes", "data", "group", "position"])
-      ),
+      .map((node: object) => pick(node, ["classes", "data", "group"])),
     edges: exp.elements.edges
       .filter((edge: any) => edge.classes === "graph-edge")
       .map((edge: object) => pick(edge, ["classes", "data", "group"]))
@@ -283,7 +281,7 @@ const GraphVisualisation: React.FC<{
       resetLayout();
     });
 
-    cy.on("add remove move dragfree data", ".graph-node, .graph-edge", () => {
+    cy.on("add remove data", ".graph-node, .graph-edge", () => {
       if (!cy || interactionDisabled.current) return;
 
       const exp = graphToHash(cy);
