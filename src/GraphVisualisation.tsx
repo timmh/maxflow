@@ -55,10 +55,16 @@ const getNewNodeLabel = (cy: cytoscape.Core) =>
     "A".charCodeAt(0) + Math.random() * ("Z".charCodeAt(0) - "A".charCodeAt(0))
   );
 
-const GraphVisualisation: React.FC<{
+interface GraphVisualisationProps {
   visRef: (visRef: VisRef) => void;
   disableInteraction: boolean;
-}> = ({ visRef, disableInteraction }) => {
+  autoLayout: boolean;
+}
+
+const GraphVisualisation: React.FC<GraphVisualisationProps> = props => {
+  const { visRef, disableInteraction, autoLayout } = props;
+  const currentPropsRef = useRef<GraphVisualisationProps | null>(null);
+  currentPropsRef.current = props;
   const [ready, setReady] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   let [cy, setCy] = useState<cytoscape.Core | null>(null);
@@ -272,7 +278,7 @@ const GraphVisualisation: React.FC<{
     });
 
     cy.on("mouseout", ".graph-node", evt => {
-      layout.start();
+      if (currentPropsRef.current!.autoLayout) layout.start();
     });
 
     cy.on("tap", evt => {
@@ -403,6 +409,15 @@ const GraphVisualisation: React.FC<{
     // @ts-ignore
     cy.style().update();
   }, [disableInteraction]);
+
+  useEffect(() => {
+    if (!graphVisualisationRef.current) return;
+    if (!autoLayout) {
+      graphVisualisationRef.current.layout.stop();
+    } else {
+      graphVisualisationRef.current.layout.start();
+    }
+  }, [graphVisualisationRef.current, autoLayout]);
 
   if (!ready) return null;
 

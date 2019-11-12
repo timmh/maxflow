@@ -28,6 +28,12 @@
   }
 }
 
+.graph-controls {
+  label {
+    user-select: none;
+  }
+}
+
 .graph-visualisation {
   flex: 1;
 }

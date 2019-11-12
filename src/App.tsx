@@ -7,8 +7,10 @@ import Controls from "./Controls";
 import useInterval from "./utils/useInterval";
 import { useDropzone } from "react-dropzone";
 import Swal from "sweetalert2";
-import { tgf2cyto } from "./utils/io";
+import { tgf2cyto, cyto2tgf } from "./utils/io";
 import assertValidGraph from "./utils/assertValidGraph";
+import GraphControls from "./GraphControls";
+import FileSaver from "file-saver";
 
 interface Algorithm {
   name: string;
@@ -38,6 +40,7 @@ const App: React.FC = () => {
   const [highlightedLines, setHighlightedLines] = useState<number[]>([]);
   const [queueElements, setQueueElements] = useState<any[]>([]);
   const [visRef, setVisRef] = useState<VisRef | null>(null);
+  const [autoLayout, setAutoLayout] = useState(true);
 
   useEffect(() => {
     algorithm &&
@@ -130,19 +133,38 @@ const App: React.FC = () => {
     },
     [algorithmState, visRef]
   );
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, open: openDropzone } = useDropzone({
+    onDrop,
+    noClick: true
+  });
 
   if (algorithm === null) return null;
 
   return (
-    <div className="app" {...getRootProps()} onClick={() => undefined}>
+    <div className="app" {...getRootProps()}>
       <input {...getInputProps()} />
       <div className="app__left">
+        <GraphControls
+          autoLayout={autoLayout}
+          setAutoLayout={setAutoLayout}
+          onImport={() => openDropzone()}
+          onExport={() =>
+            visRef &&
+            FileSaver.saveAs(
+              new Blob([cyto2tgf(visRef.cy)], {
+                type: "text/plain;charset=utf-8"
+              }),
+              "graph.tgf",
+              { autoBom: true }
+            )
+          }
+        />
         <GraphVisualisation
           visRef={(nextVisRef: any) => {
             if (nextVisRef !== visRef) setVisRef(nextVisRef);
           }}
           disableInteraction={algorithmState !== "stopped"}
+          autoLayout={autoLayout}
         />
         <QueueVisualization elements={queueElements} />
       </div>
