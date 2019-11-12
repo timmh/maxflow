@@ -8,10 +8,9 @@ import "./cytoscape-edgehandles.d";
 import FontFaceObserver from "fontfaceobserver";
 import cxtmenu from "cytoscape-cxtmenu";
 import Swal from "sweetalert2";
-import pako from "pako";
-import { pick } from "lodash";
 import defaultHash from "./utils/defaultHash";
 import * as styleVariables from "./variables.scss";
+import { cyto2tgf, tgf2cyto } from "./utils/io";
 
 cytoscape.use(cola);
 cytoscape.use(edgehandles);
@@ -26,27 +25,13 @@ export interface VisRef {
 }
 
 const graphToHash = (cy: cytoscape.Core) => {
-  let exp = JSON.parse(JSON.stringify(cy.json()));
-  exp = pick(exp, ["elements", "pan", "zoom"]);
-  exp.elements = {
-    nodes: exp.elements.nodes
-      .filter((node: any) => node.classes === "graph-node")
-      .map((node: object) => pick(node, ["classes", "data", "group"])),
-    edges: exp.elements.edges
-      .filter((edge: any) => edge.classes === "graph-edge")
-      .map((edge: object) => pick(edge, ["classes", "data", "group"]))
-  };
-  exp = JSON.stringify(exp);
-  exp = btoa(pako.deflate(exp, { to: "string" }));
-  exp = `#${encodeURIComponent(exp)}`;
-  return exp;
+  return `#${encodeURIComponent(cyto2tgf(cy))}`;
 };
 
 const hashToGraph = (hash: string) => {
   if (!hash.startsWith("#")) throw new Error("invalid hash");
-  let imp = decodeURIComponent(hash.substr(1));
-  imp = pako.inflate(atob(imp), { to: "string" });
-  return JSON.parse(imp);
+  const cyto = tgf2cyto(decodeURIComponent(hash.substr(1)));
+  return [...cyto.nodes, ...cyto.edges];
 };
 
 // TODO: still not correct after Z
@@ -82,7 +67,7 @@ const GraphVisualisation: React.FC<GraphVisualisationProps> = props => {
 
     // @ts-ignore
     cy = cytoscape({
-      ...hashToGraph(window.location.hash || defaultHash),
+      elements: hashToGraph(window.location.hash || defaultHash),
       container: containerRef.current,
       boxSelectionEnabled: false,
       minZoom: 0.5,

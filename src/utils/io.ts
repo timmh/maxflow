@@ -34,7 +34,7 @@ const tgf2cyto = (tgf: String) => {
     .filter(tokens => tokens.length === 3)
     .map(tokens => ({
       data: {
-        id: `${tokens[0]}-${tokens[0]}`,
+        id: `${tokens[0]}-${tokens[1]}`,
         source: tokens[0],
         target: tokens[1],
         capacity: parseInt(tokens[2], 10) || 0,
@@ -48,8 +48,8 @@ const tgf2cyto = (tgf: String) => {
     if (
       edges.filter(
         (otherEdge: any) =>
-          edge.data.source === edge.data.target &&
-          edge.data.target === edge.data.source
+          edge.data.source === otherEdge.data.target &&
+          edge.data.target === otherEdge.data.source
       ).length === 0
     ) {
       edges.push({
