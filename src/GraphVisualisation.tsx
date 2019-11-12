@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "d3-selection-multi";
-import cytoscape from "cytoscape";
+import cytoscape, { EdgeSingular } from "cytoscape";
 import cola from "cytoscape-cola";
 import "./cytoscape-cola.d";
 import edgehandles from "cytoscape-edgehandles";
@@ -112,7 +112,6 @@ const GraphVisualisation: React.FC<{
         {
           selector: ".graph-edge",
           style: {
-            "curve-style": "bezier",
             "target-arrow-shape": "triangle",
             "line-color": "black",
             "target-arrow-color": "black",
@@ -122,11 +121,23 @@ const GraphVisualisation: React.FC<{
             "text-background-padding": 0,
             "font-family": "KaTeX_Math",
             "font-size": 12,
-            content: (edge: any) =>
+            content: (edge: EdgeSingular) =>
               typeof edge.data("flow") === "number" &&
               typeof edge.data("capacity") === "number"
                 ? ` ${edge.data("flow")}/${edge.data("capacity")} `
-                : ""
+                : "",
+            "curve-style": (edge: EdgeSingular) =>
+              !interactionDisabled.current ||
+              edge
+                .parallelEdges()
+                .difference(edge.codirectedEdges())
+                .filter(otherEdge => otherEdge.data("capacity") > 0).length > 0
+                ? "bezier"
+                : "straight",
+            visibility: (edge: EdgeSingular) =>
+              edge.data("capacity") <= 0 && interactionDisabled.current
+                ? "hidden"
+                : "visible"
           }
         },
         {
@@ -389,6 +400,8 @@ const GraphVisualisation: React.FC<{
       // @ts-ignore
       cyEdgehandles.enable();
     }
+    // @ts-ignore
+    cy.style().update();
   }, [disableInteraction]);
 
   if (!ready) return null;

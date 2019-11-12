@@ -146,20 +146,12 @@ export default {
             .parallelEdges()
             .difference(currentLink.codirectedEdges())[0];
           currentLink.data("flow", currentLink.data("flow") + df);
-          vis.cy.$(".highlighted").removeClass("highlighted");
-          currentLink.addClass("highlighted");
-          yield {
-            highlightedLines: [22],
-            queueElements: q.map(e => ({
-              label: e.data("label"),
-              type: e.data("type")
-            }))
-          };
           reverseCurrentLink.data("flow", reverseCurrentLink.data("flow") - df);
           vis.cy.$(".highlighted").removeClass("highlighted");
+          currentLink.addClass("highlighted");
           reverseCurrentLink.addClass("highlighted");
           yield {
-            highlightedLines: [23],
+            highlightedLines: [22, 23],
             queueElements: q.map(e => ({
               label: e.data("label"),
               type: e.data("type")
