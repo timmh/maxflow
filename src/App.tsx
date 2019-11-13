@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import GraphVisualisation, { VisRef } from "./GraphVisualisation";
 import "./App.scss";
 import Pseudocode from "./Pseudocode";
-import QueueVisualization from "./QueueVisualization";
+import NodeQueueVisualization from "./NodeQueueVisualization";
 import Controls from "./Controls";
 import useInterval from "./utils/useInterval";
 import { useDropzone } from "react-dropzone";
@@ -12,13 +12,19 @@ import assertValidGraph from "./utils/assertValidGraph";
 import GraphControls from "./GraphControls";
 import FileSaver from "file-saver";
 import config from "./config";
+import { Graph, GraphMutation, Node } from "./CytoscapeGraph";
 
 interface Algorithm {
   name: string;
   pseudocode: string;
   labeledBlocks: { lines: [number, number]; color: string; label: string }[];
-  implementation: (vis: VisRef) => Generator<never, void, unknown>;
-  cleanup: (vis: VisRef) => void;
+  implementation: (graph: Graph) => Generator<never, void, unknown>;
+}
+
+interface AlgorithmStepResult {
+  highlightedLines: number[];
+  queueNodes: Node[];
+  graphMutations: GraphMutation[];
 }
 
 const App: React.FC = () => {
@@ -32,12 +38,9 @@ const App: React.FC = () => {
   const [
     algorithmImplementationInstance,
     setAlgorithmImplementationInstance
-  ] = useState<Generator<{
-    highlightedLines: number[];
-    queueElements: any[];
-  }> | null>(null);
+  ] = useState<Generator<AlgorithmStepResult> | null>(null);
   const [algorithmState, setAlgorithmState] = useState<
-    "stopped" | "auto" | "manual"
+    "stopped" | "auto" | "manual" | "finished"
   >("stopped");
   const [highlightedLines, setHighlightedLines] = useState<number[][]>([]);
   const queueHighlightedLines = (newHighlightedLines: number[]) => {
@@ -46,15 +49,20 @@ const App: React.FC = () => {
       ...highlightedLines.slice(0, config.highlightedLinesCount - 1)
     ]);
   };
-  const [queueElements, setQueueElements] = useState<any[]>([]);
+  const [queueNodes, setQueueNodes] = useState<any[]>([]);
   const [visRef, setVisRef] = useState<VisRef | null>(null);
+  const [graph, setGraph] = useState<Graph | null>(null);
   const [autoLayout, setAutoLayout] = useState(true);
+  const [stepBackwardBuffer, setStepBackwardBuffer] = useState<
+    AlgorithmStepResult[]
+  >([]);
+  const [stepBackwardBufferIndex, setStepBackwardBufferIndex] = useState(-1);
 
   useEffect(() => {
     algorithm &&
-      visRef &&
-      setAlgorithmImplementationInstance(algorithm.implementation(visRef));
-  }, [algorithm, visRef]);
+      graph &&
+      setAlgorithmImplementationInstance(algorithm.implementation(graph));
+  }, [algorithm, graph]);
 
   const stepForward = () => {
     if (!algorithmImplementationInstance || !visRef) return;
@@ -64,25 +72,67 @@ const App: React.FC = () => {
       Swal.fire("Error", err.toString(), "error");
       return;
     }
-    const result = algorithmImplementationInstance.next();
-    if (!result || result.done) {
-      setAlgorithmState("stopped");
-      // if (highlightedLines) setHighlightedLines(highlightedLines);
-      // if (queueElements) setQueueElements(queueElements);
+
+    let result;
+    if (stepBackwardBufferIndex >= stepBackwardBuffer.length - 1) {
+      const yieldResult = algorithmImplementationInstance.next();
+      if (!yieldResult || yieldResult.done) {
+        setAlgorithmState("finished");
+      } else {
+        result = yieldResult.value;
+        setStepBackwardBuffer([...stepBackwardBuffer, yieldResult.value]);
+        setStepBackwardBufferIndex(stepBackwardBufferIndex + 1);
+      }
     } else {
-      const { highlightedLines, queueElements } = result.value;
+      result = stepBackwardBuffer[stepBackwardBufferIndex + 1];
+      setStepBackwardBufferIndex(stepBackwardBufferIndex + 1);
+    }
+    if (result) {
+      const { highlightedLines, queueNodes, graphMutations } = result;
       if (highlightedLines) queueHighlightedLines(highlightedLines);
-      if (queueElements) setQueueElements(queueElements);
+      if (queueNodes) setQueueNodes(queueNodes);
+      graphMutations.forEach(graphMutation => graphMutation.apply());
+    }
+  };
+
+  const stepBackward = () => {
+    if (!algorithmImplementationInstance || !visRef) return;
+    if (stepBackwardBufferIndex === -1) return;
+    const currentResult = stepBackwardBuffer[stepBackwardBufferIndex];
+    const result = stepBackwardBuffer[stepBackwardBufferIndex - 1];
+    setStepBackwardBufferIndex(stepBackwardBufferIndex - 1);
+    currentResult.graphMutations
+      .slice()
+      .reverse()
+      .forEach(graphMutation => graphMutation.inverse().apply());
+    if (!result) {
+      setQueueNodes([]);
+      setHighlightedLines([]);
+    } else {
+      const { highlightedLines, queueNodes, graphMutations } = result;
+      if (highlightedLines) setHighlightedLines([highlightedLines]);
+      if (queueNodes) setQueueNodes(queueNodes);
     }
   };
 
   const reset = () => {
+    stepBackwardBuffer
+      .slice()
+      .reverse()
+      .forEach(result => {
+        result.graphMutations
+          .slice()
+          .reverse()
+          .forEach(graphMutation => graphMutation.inverse().apply());
+      });
     setAlgorithmState("stopped");
     setHighlightedLines([]);
-    setQueueElements([]);
-    if (algorithm && visRef) {
-      algorithm.cleanup(visRef);
-      setAlgorithmImplementationInstance(algorithm.implementation(visRef));
+    setQueueNodes([]);
+    setStepBackwardBuffer([]);
+    setStepBackwardBufferIndex(-1);
+    setHighlightedLines([]);
+    if (algorithm && graph) {
+      setAlgorithmImplementationInstance(algorithm.implementation(graph));
     }
   };
 
@@ -168,19 +218,23 @@ const App: React.FC = () => {
           }
         />
         <GraphVisualisation
-          visRef={(nextVisRef: any) => {
-            if (nextVisRef !== visRef) setVisRef(nextVisRef);
+          visRef={(nextVisRef: VisRef) => {
+            if (nextVisRef !== visRef) {
+              setVisRef(nextVisRef);
+            }
+            setGraph(new Graph(nextVisRef.cy));
           }}
           disableInteraction={algorithmState !== "stopped"}
           autoLayout={autoLayout}
         />
-        <QueueVisualization elements={queueElements} />
+        <NodeQueueVisualization nodes={queueNodes} />
       </div>
       <div className="app__right">
         <Controls
           state={algorithmState}
           setState={setAlgorithmState}
-          stepForward={stepForward}
+          stepBackward={stepBackwardBufferIndex > -1 ? stepBackward : undefined}
+          stepForward={algorithmState !== "finished" ? stepForward : undefined}
           reset={reset}
         />
         <Pseudocode algorithm={algorithm} highlightedLines={highlightedLines} />

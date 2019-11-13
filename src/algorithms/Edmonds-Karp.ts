@@ -1,5 +1,12 @@
-import { VisRef } from "../GraphVisualisation";
-import { EdgeSingular } from "cytoscape";
+import {
+  Graph,
+  GraphMutation,
+  Node,
+  Edge,
+  GraphEdgeFlowMutation,
+  GraphNodeHighlightMutation,
+  GraphEdgeHighlightMutation
+} from "../CytoscapeGraph";
 
 export default {
   name: "Edmonds-Karp",
@@ -47,137 +54,120 @@ export default {
     }
   ],
   implementation: function*(
-    vis: VisRef
+    graph: Graph
   ): IterableIterator<{
     highlightedLines: number[];
-    queueElements?: any[];
+    queueNodes: Node[];
+    graphMutations: GraphMutation[];
   }> {
-    const sourceNode = vis.cy.nodes('node[type="source"]')[0];
-    const sinkNode = vis.cy.nodes('node[type="sink"]')[0];
-    // const sourceNode = graph.getSourceNode();
-    // const sinkNode = graph.getSinkNode();
+    const sourceNode = graph.getSourceNode();
+    const sinkNode = graph.getSinkNode();
 
     let flow = 0;
-    let pred: { [key: string]: cytoscape.EdgeSingular };
-    // let flow = 0; // initialize flow to zero
-    // let pred: { [key: string]: FlowLink };
-    // let finalPred: { [key: string]: FlowLink } = {};
+    let pred: { [key: string]: Edge };
 
     do {
-      vis.cy.$(".highlighted").removeClass("highlighted");
       const q = [sourceNode];
       pred = {};
 
+      const mutationsToUndoAfterSearch = [];
+
       yield {
         highlightedLines: [4, 5],
-        queueElements: q.map(e => ({
-          label: e.data("label"),
-          type: e.data("type")
-        }))
+        queueNodes: q,
+        graphMutations: []
       };
 
       while (q.length > 0) {
-        const cur: cytoscape.NodeSingular = q.shift()!;
-        // vis.cy.$(".highlighted").removeClass("highlighted");
-        cur.addClass("highlighted");
+        const cur = q.shift()!;
+        mutationsToUndoAfterSearch.push(
+          new GraphNodeHighlightMutation(cur).inverse()
+        );
         yield {
           highlightedLines: [7],
-          queueElements: q.map(e => ({
-            label: e.data("label"),
-            type: e.data("type")
-          }))
+          queueNodes: q,
+          graphMutations: [new GraphNodeHighlightMutation(cur)]
         };
-        for (let link of cur!
-          .outgoers("edge")
-          .sort((edge1, edge2) => {
-            const label1 = (edge1 as EdgeSingular).target().data("label");
-            const label2 = (edge2 as EdgeSingular).target().data("label");
-            if (label1 < label2) return -1;
-            if (label1 > label2) return 1;
-            return 0;
-          })
-          .toArray() as EdgeSingular[]) {
+        for (let edge of cur.getOutgoingEdges()) {
           if (
-            pred[link.target().id()] === undefined &&
-            link.target().id() !== sourceNode.id() &&
-            link.data("capacity") > link.data("flow")
+            pred[edge.getTargetNode().getId()] === undefined &&
+            !edge.getTargetNode().isEqualTo(sourceNode) &&
+            edge.getCapacity() > edge.getFlow()
           ) {
-            // vis.cy.$(".highlighted").removeClass("highlighted");
-            link.addClass("highlighted");
-            link.target().addClass("highlighted");
-            yield {
-              highlightedLines: [10, 11],
-              queueElements: q.map(e => ({
-                label: e.data("label"),
-                type: e.data("type")
-              }))
-            };
-            pred[link.target().id()] = link;
-            q.push(link.target());
+            pred[edge.getTargetNode().getId()] = edge;
+            q.push(edge.getTargetNode());
           }
+          mutationsToUndoAfterSearch.push(
+            new GraphEdgeHighlightMutation(edge).inverse()
+          );
+          yield {
+            highlightedLines: [10, 11],
+            queueNodes: q,
+            graphMutations: [new GraphEdgeHighlightMutation(edge)]
+          };
         }
       }
-      if (pred[sinkNode.id()] !== undefined) {
-        // found an augmenting path
-
-        vis.cy.$(".highlighted").removeClass("highlighted");
-
-        let currentHighlightEdge = pred[sinkNode.id()];
+      if (pred[sinkNode.getId()] !== undefined) {
+        let currentHighlightEdge = pred[sinkNode.getId()];
+        const foundPathHighlightMutations: GraphMutation[] = [];
         while (currentHighlightEdge) {
-          currentHighlightEdge.addClass("highlighted");
-          currentHighlightEdge.source().addClass("highlighted");
-          currentHighlightEdge.target().addClass("highlighted");
-          currentHighlightEdge = pred[currentHighlightEdge.source().id()];
+          foundPathHighlightMutations.push(
+            new GraphEdgeHighlightMutation(currentHighlightEdge),
+            new GraphNodeHighlightMutation(
+              currentHighlightEdge.getSourceNode()
+            ),
+            new GraphNodeHighlightMutation(currentHighlightEdge.getTargetNode())
+          );
+          currentHighlightEdge =
+            pred[currentHighlightEdge.getSourceNode().getId()];
         }
+        const mutationsToUndoAfterUpdate = foundPathHighlightMutations
+          .slice()
+          .reverse()
+          .map(mutation => mutation.inverse());
 
         yield {
           highlightedLines: [16],
-          queueElements: q.map(e => ({
-            label: e.data("label"),
-            type: e.data("type")
-          }))
+          queueNodes: q,
+          graphMutations: [
+            ...mutationsToUndoAfterSearch,
+            ...foundPathHighlightMutations
+          ]
         };
 
         let df = Infinity;
-        let currentLink = pred[sinkNode.id()];
-        while (currentLink !== undefined) {
-          df = Math.min(
-            df,
-            currentLink.data("capacity") - currentLink.data("flow")
-          );
-          currentLink = pred[currentLink.source().id()];
+        let currentEdge = pred[sinkNode.getId()];
+        while (currentEdge !== undefined) {
+          df = Math.min(df, currentEdge.getCapacity() - currentEdge.getFlow());
+          currentEdge = pred[currentEdge.getSourceNode().getId()];
         }
 
-        currentLink = pred[sinkNode.id()];
-        while (currentLink !== undefined) {
-          const reverseCurrentLink = currentLink
-            .parallelEdges()
-            .difference(currentLink.codirectedEdges())[0];
-          currentLink.data("flow", currentLink.data("flow") + df);
-          reverseCurrentLink.data("flow", reverseCurrentLink.data("flow") - df);
-          vis.cy.$(".highlighted").removeClass("highlighted");
-          currentLink.addClass("highlighted");
-          reverseCurrentLink.addClass("highlighted");
+        currentEdge = pred[sinkNode.getId()];
+        while (currentEdge !== undefined) {
+          const reverseCurrentEdge = currentEdge.getReverseEdge();
           yield {
             highlightedLines: [22, 23],
-            queueElements: q.map(e => ({
-              label: e.data("label"),
-              type: e.data("type")
-            }))
+            queueNodes: q,
+            graphMutations: [
+              new GraphEdgeFlowMutation(currentEdge, df),
+              new GraphEdgeFlowMutation(reverseCurrentEdge, -df)
+            ]
           };
-          currentLink = pred[currentLink.source().id()];
+          currentEdge = pred[currentEdge.getSourceNode().getId()];
         }
         flow = flow + df;
+        yield {
+          highlightedLines: [25],
+          queueNodes: q,
+          graphMutations: mutationsToUndoAfterUpdate
+        };
       }
-    } while (pred[sinkNode.id()] !== undefined);
-    vis.cy.$(".highlighted").removeClass("highlighted");
+    } while (pred[sinkNode.getId()] !== undefined);
     yield {
-      highlightedLines: [28]
+      highlightedLines: [28],
+      queueNodes: [],
+      graphMutations: []
     };
     return flow;
-  },
-  cleanup: (vis: VisRef) => {
-    vis.cy.$(".graph-edge").data("flow", 0);
-    vis.cy.$(".highlighted").removeClass("highlighted");
   }
 };

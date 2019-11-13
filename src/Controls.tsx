@@ -4,22 +4,36 @@ import {
   faPlay,
   faPause,
   faStepForward,
-  faUndo
+  faUndo,
+  faStepBackward
 } from "@fortawesome/free-solid-svg-icons";
 
 const Controls: React.FC<{
-  state: "stopped" | "auto" | "manual";
-  setState: (state: "stopped" | "auto" | "manual") => void;
-  stepForward: () => void;
+  state: "stopped" | "auto" | "manual" | "finished";
+  setState: (state: "stopped" | "auto" | "manual" | "finished") => void;
+  stepBackward?: () => void;
+  stepForward?: () => void;
   reset: () => void;
-}> = ({ state, setState, stepForward, reset }) => {
+}> = ({ state, setState, stepBackward, stepForward, reset }) => {
   return (
     <div className="controls">
+      <button
+        title="Step Backward"
+        className="controls__button"
+        onClick={() => {
+          setState("manual");
+          stepBackward && stepBackward();
+        }}
+        disabled={state === "auto" || !stepBackward}
+      >
+        <FontAwesomeIcon size="2x" icon={faStepBackward} />
+      </button>
       {state !== "auto" ? (
         <button
           title="Start"
           className="controls__button"
           onClick={() => setState("auto")}
+          disabled={state === "finished"}
         >
           <FontAwesomeIcon size="2x" icon={faPlay} />
         </button>
@@ -37,9 +51,9 @@ const Controls: React.FC<{
         className="controls__button"
         onClick={() => {
           setState("manual");
-          stepForward();
+          stepForward && stepForward();
         }}
-        disabled={state === "auto"}
+        disabled={state === "auto" || !stepForward}
       >
         <FontAwesomeIcon size="2x" icon={faStepForward} />
       </button>

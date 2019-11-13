@@ -30,10 +30,10 @@ const Pseudocode: React.FC<{
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-    el.querySelectorAll(".ps-line--highlighted").forEach(element => {
-      [...new Array(config.highlightedLinesCount).keys()].forEach(t => {
+    el.querySelectorAll(".ps-line").forEach(element => {
+      for (let t = 0; t < config.highlightedLinesCount; t++) {
         element.classList.remove(`ps-line--highlighted-${t}`);
-      });
+      }
     });
     el.querySelectorAll(".ps-line").forEach((line, i) => {
       highlightedLines.forEach((highlightedLines, t) => {
