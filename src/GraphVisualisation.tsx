@@ -21,6 +21,7 @@ const nodeSize = 50;
 export interface VisRef {
   cy: cytoscape.Core;
   layout: cytoscape.Layouts;
+  edgehandles: any;
   resetLayout: () => void;
 }
 
@@ -297,7 +298,12 @@ const GraphVisualisation: React.FC<GraphVisualisationProps> = props => {
 
     enableMenus();
     setCy(cy);
-    const nextGraphVisualisationRef: VisRef = { cy, layout, resetLayout };
+    const nextGraphVisualisationRef: VisRef = {
+      cy,
+      layout,
+      resetLayout,
+      edgehandles
+    };
     if (!graphVisualisationRef.current) {
       graphVisualisationRef.current = nextGraphVisualisationRef;
     } else {

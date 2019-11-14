@@ -216,13 +216,14 @@ const App: React.FC = () => {
               { autoBom: true }
             )
           }
-          onExportPng={() =>
-            visRef &&
+          onExportPng={() => {
+            if (!visRef) return;
+            visRef.edgehandles.hide();
             FileSaver.saveAs(
               visRef.cy.png({ output: "blob", full: true, scale: 10 }),
               "graph.png"
-            )
-          }
+            );
+          }}
         />
         <GraphVisualisation
           visRef={(nextVisRef: VisRef) => {
