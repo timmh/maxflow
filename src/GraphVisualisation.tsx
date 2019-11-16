@@ -364,6 +364,17 @@ const GraphVisualisation: React.FC<GraphVisualisationProps> = props => {
           select: (edge: cytoscape.EdgeSingular) => edge.remove()
         },
         {
+          content: "Reverse",
+          select: (edge: cytoscape.EdgeSingular) => {
+            const reverseEdge = edge
+              .parallelEdges()
+              .difference(edge.codirectedEdges())[0] as EdgeSingular;
+            const edgeCapacity = edge.data("capacity");
+            edge.data("capacity", reverseEdge.data("capacity"));
+            reverseEdge.data("capacity", edgeCapacity);
+          }
+        },
+        {
           content: "Change Capacity",
           select: async (edge: cytoscape.EdgeSingular) => {
             let { value } = await Swal.fire({
