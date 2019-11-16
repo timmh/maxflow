@@ -13,7 +13,7 @@ export default {
   pseudocode: String.raw`
     \begin{algorithm}
     \begin{algorithmic}
-    \PROCEDURE{Edmonds-Karp}{$N=(V,\ E),\ s \in V,\ t \in V$}
+    \PROCEDURE{Edmonds-Karp}{$G=(V,\ E),\ s \in V,\ t \in V$}
         \STATE $f = 0$
         \REPEAT
             \STATE $p = \left[\ \right]$
