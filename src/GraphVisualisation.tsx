@@ -36,7 +36,7 @@ const hashToGraph = (hash: string) => {
 };
 
 // TODO: still not correct after Z
-const getNewNodeLabel = (cy: cytoscape.Core) =>
+const getNewNodeLabel = () =>
   String.fromCharCode(
     "A".charCodeAt(0) + Math.random() * ("Z".charCodeAt(0) - "A".charCodeAt(0))
   );
@@ -259,29 +259,12 @@ const GraphVisualisation: React.FC<GraphVisualisationProps> = props => {
 
     setCyEdgehandles(edgehandles);
 
-    cy.on("mouseover", ".graph-node", evt => {
+    cy.on("mouseover", ".graph-node", () => {
       layout.stop();
     });
 
-    cy.on("mouseout", ".graph-node", evt => {
+    cy.on("mouseout", ".graph-node", () => {
       if (currentPropsRef.current!.autoLayout) layout.start();
-    });
-
-    cy.on("tap", evt => {
-      if (!cy || evt.target !== cy || interactionDisabled.current) return; // only handle taps on background
-      // @ts-ignore
-      cy.add([
-        {
-          group: "nodes",
-          data: { label: getNewNodeLabel(cy), type: "default" },
-          classes: "graph-node",
-          renderedPosition: {
-            x: evt.renderedPosition.x,
-            y: evt.renderedPosition.y
-          }
-        }
-      ]);
-      resetLayout();
     });
 
     cy.on("add remove data", ".graph-node, .graph-edge", () => {
@@ -391,7 +374,32 @@ const GraphVisualisation: React.FC<GraphVisualisationProps> = props => {
     });
 
     // @ts-ignore
-    setCyMenus([nodeMenu, edgeMenu]);
+    const coreMenu = cy.cxtmenu({
+      menuRadius: 2 * nodeSize,
+      selector: "core",
+      commands: [
+        {
+          content: "Add Node",
+          select: (target: any, evt: cytoscape.EventObject) => {
+            if (!cy || target !== cy || interactionDisabled.current) return; // only handle taps on background
+            cy.add([
+              {
+                group: "nodes",
+                data: { label: getNewNodeLabel(), type: "default" },
+                classes: "graph-node",
+                renderedPosition: {
+                  x: evt.renderedPosition.x,
+                  y: evt.renderedPosition.y
+                }
+              }
+            ]);
+          }
+        }
+      ]
+    });
+
+    // @ts-ignore
+    setCyMenus([nodeMenu, edgeMenu, coreMenu]);
   };
 
   useEffect(() => {
