@@ -235,7 +235,6 @@ const App: React.FC = () => {
           disableInteraction={algorithmState !== "stopped"}
           autoLayout={autoLayout}
         />
-        <NodeQueueVisualization nodes={queueNodes} />
       </div>
       <div className="app__right">
         <Controls
@@ -246,6 +245,7 @@ const App: React.FC = () => {
           reset={reset}
         />
         <Pseudocode algorithm={algorithm} highlightedLines={highlightedLines} />
+        <NodeQueueVisualization nodes={queueNodes} />
       </div>
     </div>
   );

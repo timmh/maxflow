@@ -46,6 +46,7 @@
   display: flex;
   align-items: center;
   border-top: $border-size solid $border-color;
+  border-bottom: $border-size solid $border-color;
 
   &__title {
     font-family: KaTeX_Main;
@@ -57,6 +58,12 @@
     flex: 1;
     display: flex;
     overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  &__elements-front {
+    display: flex;
+    flex: 1;
   }
 
   &__element {
