@@ -119,6 +119,7 @@ const GraphVisualisation: React.FC<GraphVisualisationProps> = props => {
                 ? ` ${edge.data("flow")}/${edge.data("capacity")} `
                 : "",
             "curve-style": (edge: EdgeSingular) =>
+              true ||
               !interactionDisabled.current ||
               edge
                 .parallelEdges()
@@ -127,7 +128,7 @@ const GraphVisualisation: React.FC<GraphVisualisationProps> = props => {
                 ? "bezier"
                 : "straight",
             visibility: (edge: EdgeSingular) =>
-              edge.data("capacity") <= 0 && interactionDisabled.current
+              edge.data("capacity") <= 0 && false && interactionDisabled.current
                 ? "hidden"
                 : "visible"
           }
@@ -188,6 +189,9 @@ const GraphVisualisation: React.FC<GraphVisualisationProps> = props => {
         }
       ]
     });
+
+    // @ts-ignore
+    window.cy = cy;
 
     if (!cy) return;
 
