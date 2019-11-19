@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback } from "react";
-import GraphVisualisation, { VisRef } from "./GraphVisualisation";
 import "./App.scss";
 import Pseudocode from "./Pseudocode";
 import NodeQueueVisualization from "./NodeQueueVisualization";
@@ -13,6 +12,7 @@ import GraphControls, { GraphDisplayState } from "./GraphControls";
 import FileSaver from "file-saver";
 import config from "./config";
 import { Graph, GraphMutation, Node } from "./CytoscapeGraph";
+import GraphVisualization from "./GraphVisualization";
 
 interface Algorithm {
   name: string;
@@ -50,7 +50,7 @@ const App: React.FC = () => {
     ]);
   };
   const [queueNodes, setQueueNodes] = useState<any[]>([]);
-  const [visRef, setVisRef] = useState<VisRef | null>(null);
+  const [visRef, setVisRef] = useState<GraphVisualization | null>(null);
   const [graph, setGraph] = useState<Graph | null>(null);
   const [autoLayout, setAutoLayout] = useState(true);
   const [stepBackwardBuffer, setStepBackwardBuffer] = useState<
@@ -71,7 +71,7 @@ const App: React.FC = () => {
   const stepForward = () => {
     if (!algorithmImplementationInstance || !visRef) return;
     try {
-      assertValidGraph(visRef.cy);
+      assertValidGraph(visRef.cy!);
     } catch (err) {
       Swal.fire("Error", err.toString(), "error");
       return;
@@ -144,7 +144,7 @@ const App: React.FC = () => {
     () => {
       if (algorithmState === "auto" && visRef) {
         try {
-          assertValidGraph(visRef.cy);
+          assertValidGraph(visRef.cy!);
         } catch (err) {
           Swal.fire("Error", err.toString(), "error");
           reset();
@@ -184,7 +184,7 @@ const App: React.FC = () => {
         } else {
           try {
             const elements = tgf2cyto(reader.result);
-            visRef!.cy.json({ elements });
+            visRef!.cy!.json({ elements });
             visRef!.resetLayout();
           } catch (err) {
             Swal.fire("Error", `Parsing error: ${err.toString()}`, "error");
@@ -213,7 +213,7 @@ const App: React.FC = () => {
           onExport={() =>
             visRef &&
             FileSaver.saveAs(
-              new Blob([cyto2tgf(visRef.cy)], {
+              new Blob([cyto2tgf(visRef.cy!)], {
                 type: "text/plain;charset=utf-8"
               }),
               "graph.tgf",
@@ -224,19 +224,17 @@ const App: React.FC = () => {
             if (!visRef) return;
             visRef.edgehandles.hide();
             FileSaver.saveAs(
-              visRef.cy.png({ output: "blob", full: true, scale: 10 }),
+              visRef.cy!.png({ output: "blob", full: true, scale: 10 }),
               "graph.png"
             );
           }}
           graphDisplayState={graphDisplayState}
           setGraphDisplayState={setGraphDisplayState}
         />
-        <GraphVisualisation
-          visRef={(nextVisRef: VisRef) => {
-            if (nextVisRef !== visRef) {
-              setVisRef(nextVisRef);
-            }
-            setGraph(new Graph(nextVisRef.cy));
+        <GraphVisualization
+          visualizationRef={nextVisualizationRef => {
+            setVisRef(nextVisualizationRef);
+            setGraph(new Graph(nextVisualizationRef.cy!));
           }}
           disableInteraction={algorithmState !== "stopped"}
           autoLayout={autoLayout}

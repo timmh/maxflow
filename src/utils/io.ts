@@ -1,6 +1,8 @@
 import cytoscape, { EdgeSingular } from "cytoscape";
 
-const tgf2cyto = (tgf: String) => {
+const tgf2cyto: (tgf: String) => cytoscape.ElementDefinition[] = (
+  tgf: String
+) => {
   const lines = tgf
     .split("\n")
     .map(line => line.trim())
@@ -26,7 +28,7 @@ const tgf2cyto = (tgf: String) => {
           label: tokens[0],
           type
         },
-        group: "nodes",
+        group: "nodes" as "nodes" | "edges" | undefined,
         classes: "graph-node"
       };
     });
@@ -40,7 +42,7 @@ const tgf2cyto = (tgf: String) => {
         capacity: parseInt(tokens[2], 10) || 0,
         flow: 0
       },
-      group: "edges",
+      group: "edges" as "nodes" | "edges" | undefined,
       classes: "graph-edge"
     }));
 
@@ -60,13 +62,13 @@ const tgf2cyto = (tgf: String) => {
           capacity: 0,
           flow: 0
         },
-        group: "edges",
+        group: "edges" as "nodes" | "edges" | undefined,
         classes: "graph-edge"
       });
     }
   });
 
-  const elements = { nodes, edges };
+  const elements = [...nodes, ...edges];
 
   return elements;
 };

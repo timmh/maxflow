@@ -13,6 +13,7 @@ const Switch: React.FC<{
   <div className="switch">
     {choices.map(choice => (
       <button
+        key={choice.value}
         className="switch__button"
         disabled={choice.value === activeChoice}
         onClick={() => onChoose(choice.value)}

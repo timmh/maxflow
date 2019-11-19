@@ -48,12 +48,16 @@ button {
 }
 
 .graph-controls {
+  > * {
+    margin-right: 1em;
+  }
+
   label {
     user-select: none;
   }
 }
 
-.graph-visualisation {
+.graph-visualization {
   flex: 1;
 }
 

@@ -32,9 +32,9 @@ export class GraphEdgeHighlightMutation implements GraphMutation {
 
   apply = () => {
     if (this._mode === "add") {
-      this._edge._cyEdge.addClass("highlighted");
+      this._edge._cyEdge.addClass("highlighted").emit("restyle");
     } else {
-      this._edge._cyEdge.removeClass("highlighted");
+      this._edge._cyEdge.removeClass("highlighted").emit("restyle");
     }
   };
 
@@ -56,9 +56,9 @@ export class GraphNodeHighlightMutation implements GraphMutation {
 
   apply = () => {
     if (this._mode === "add") {
-      this._node._cyNode.addClass("highlighted");
+      this._node._cyNode.addClass("highlighted").emit("restyle");
     } else {
-      this._node._cyNode.removeClass("highlighted");
+      this._node._cyNode.removeClass("highlighted").emit("restyle");
     }
   };
 
