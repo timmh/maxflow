@@ -4,6 +4,7 @@ $color-highlight: #ffd700;
 $color-handles: #ff0000;
 $highlighted-lines-count: 3;
 $node-size: 50;
+$auto-step-interval: 1000;
 
 :export {
   colorBlack: $color-black;
@@ -12,4 +13,5 @@ $node-size: 50;
   colorHandles: $color-handles;
   highlightedLinesCount: $highlighted-lines-count;
   nodeSize: $node-size;
+  autoStepInterval: $auto-step-interval;
 }

@@ -13,6 +13,7 @@ import FileSaver from "file-saver";
 import config from "./config";
 import { Graph, GraphMutation, Node } from "./CytoscapeGraph";
 import GraphVisualization from "./GraphVisualization";
+import * as styleVariables from "./variables.scss";
 
 interface Algorithm {
   name: string;
@@ -113,7 +114,7 @@ const App: React.FC = () => {
       setQueueNodes([]);
       setHighlightedLines([]);
     } else {
-      const { highlightedLines, queueNodes, graphMutations } = result;
+      const { highlightedLines, queueNodes } = result;
       if (highlightedLines) setHighlightedLines([highlightedLines]);
       if (queueNodes) setQueueNodes(queueNodes);
     }
@@ -153,7 +154,7 @@ const App: React.FC = () => {
         stepForward();
       }
     },
-    1000,
+    styleVariables.autoStepInterval,
     [algorithmImplementationInstance, algorithmState, setAlgorithmState]
   );
 
