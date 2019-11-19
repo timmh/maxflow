@@ -98,6 +98,10 @@ button {
     flex: 1;
   }
 
+  &__elements-back {
+    margin-left: -$border-size;
+  }
+
   &__element {
     width: $size;
     height: $size;
