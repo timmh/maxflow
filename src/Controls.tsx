@@ -60,6 +60,7 @@ const Controls: React.FC<{
       <button
         title="Reset"
         className="controls__button"
+        disabled={state === "stopped"}
         onClick={() => reset()}
       >
         <FontAwesomeIcon size="2x" icon={faUndo} />
