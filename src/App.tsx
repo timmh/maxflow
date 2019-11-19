@@ -9,7 +9,7 @@ import { useDropzone } from "react-dropzone";
 import Swal from "sweetalert2";
 import { tgf2cyto, cyto2tgf } from "./utils/io";
 import assertValidGraph from "./utils/assertValidGraph";
-import GraphControls from "./GraphControls";
+import GraphControls, { GraphDisplayState } from "./GraphControls";
 import FileSaver from "file-saver";
 import config from "./config";
 import { Graph, GraphMutation, Node } from "./CytoscapeGraph";
@@ -63,6 +63,10 @@ const App: React.FC = () => {
       graph &&
       setAlgorithmImplementationInstance(algorithm.implementation(graph));
   }, [algorithm, graph]);
+
+  const [graphDisplayState, setGraphDisplayState] = useState<GraphDisplayState>(
+    "flow"
+  );
 
   const stepForward = () => {
     if (!algorithmImplementationInstance || !visRef) return;
@@ -224,6 +228,8 @@ const App: React.FC = () => {
               "graph.png"
             );
           }}
+          graphDisplayState={graphDisplayState}
+          setGraphDisplayState={setGraphDisplayState}
         />
         <GraphVisualisation
           visRef={(nextVisRef: VisRef) => {
@@ -234,6 +240,7 @@ const App: React.FC = () => {
           }}
           disableInteraction={algorithmState !== "stopped"}
           autoLayout={autoLayout}
+          graphDisplayState={graphDisplayState}
         />
       </div>
       <div className="app__right">

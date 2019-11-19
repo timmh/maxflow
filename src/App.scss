@@ -1,5 +1,24 @@
 @import "./variables.scss";
 
+button {
+  border-radius: 0;
+  background-color: #eeeeee;
+  border: none;
+  padding: 5px 10px;
+
+  &:not(:disabled) {
+    cursor: pointer;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: #dddddd;
+  }
+}
+
+.switch {
+  display: inline-block;
+}
+
 .app {
   display: flex;
   align-items: stretch;
@@ -97,16 +116,8 @@
 
 .controls {
   &__button {
-    border-radius: 0;
-    background-color: #eeeeee;
-    border: none;
-    padding: 5px 10px;
     &:not(:last-child) {
       margin-right: 10px;
-    }
-
-    &:hover:not(:disabled) {
-      background-color: #dddddd;
     }
   }
 }

@@ -11,6 +11,7 @@ import Swal from "sweetalert2";
 import defaultHash from "./utils/defaultHash";
 import * as styleVariables from "./variables.scss";
 import { cyto2tgf, tgf2cyto } from "./utils/io";
+import { GraphDisplayState } from "./GraphControls";
 
 cytoscape.use(cola);
 cytoscape.use(edgehandles);
@@ -45,10 +46,11 @@ interface GraphVisualisationProps {
   visRef: (visRef: VisRef) => void;
   disableInteraction: boolean;
   autoLayout: boolean;
+  graphDisplayState: GraphDisplayState;
 }
 
 const GraphVisualisation: React.FC<GraphVisualisationProps> = props => {
-  const { visRef, disableInteraction, autoLayout } = props;
+  const { visRef, disableInteraction, autoLayout, graphDisplayState } = props;
   const currentPropsRef = useRef<GraphVisualisationProps | null>(null);
   currentPropsRef.current = props;
   const [ready, setReady] = useState(false);
@@ -65,6 +67,58 @@ const GraphVisualisation: React.FC<GraphVisualisationProps> = props => {
 
   useEffect(() => {
     if (!ready || !containerRef.current) return;
+
+    const getEdgeLabel = (edge: cytoscape.EdgeSingular) => {
+      if (
+        typeof edge.data("flow") !== "number" ||
+        typeof edge.data("capacity") !== "number"
+      ) {
+        return "";
+      }
+      const { graphDisplayState } = currentPropsRef.current!;
+      if (graphDisplayState === "flow") {
+        return `${edge.data("flow")}/${edge.data("capacity")}`;
+      } else if (graphDisplayState === "residual") {
+        return `${edge.data("capacity") - edge.data("flow")}`;
+      } else if (graphDisplayState === "original_flow") {
+        return `${0}/${edge.data("capacity")}`;
+      }
+    };
+
+    const getEdgeCurveStyle = (edge: cytoscape.EdgeSingular) => {
+      return edge
+        .parallelEdges()
+        .difference(edge.codirectedEdges())
+        .filter(
+          otherEdge =>
+            getEdgeVisibility(otherEdge as EdgeSingular) === "visible"
+        ).length > 0
+        ? "bezier"
+        : "straight";
+    };
+
+    const getEdgeVisibility = (edge: EdgeSingular) => {
+      if (
+        typeof edge.data("flow") !== "number" ||
+        typeof edge.data("capacity") !== "number"
+      ) {
+        return "hidden";
+      }
+      const { graphDisplayState } = currentPropsRef.current!;
+      if (graphDisplayState === "flow") {
+        return interactionDisabled.current && edge.data("capacity") === 0
+          ? "hidden"
+          : "visible";
+      } else if (graphDisplayState === "residual") {
+        return edge.data("capacity") - edge.data("flow") === 0
+          ? "hidden"
+          : "visible";
+      } else if (graphDisplayState === "original_flow") {
+        return interactionDisabled.current && edge.data("capacity") === 0
+          ? "hidden"
+          : "visible";
+      }
+    };
 
     // @ts-ignore
     cy = cytoscape({
@@ -113,24 +167,9 @@ const GraphVisualisation: React.FC<GraphVisualisationProps> = props => {
             "text-background-padding": 0,
             "font-family": "KaTeX_Math",
             "font-size": 12,
-            content: (edge: EdgeSingular) =>
-              typeof edge.data("flow") === "number" &&
-              typeof edge.data("capacity") === "number"
-                ? ` ${edge.data("flow")}/${edge.data("capacity")} `
-                : "",
-            "curve-style": (edge: EdgeSingular) =>
-              true ||
-              !interactionDisabled.current ||
-              edge
-                .parallelEdges()
-                .difference(edge.codirectedEdges())
-                .filter(otherEdge => otherEdge.data("capacity") > 0).length > 0
-                ? "bezier"
-                : "straight",
-            visibility: (edge: EdgeSingular) =>
-              edge.data("capacity") <= 0 && false && interactionDisabled.current
-                ? "hidden"
-                : "visible"
+            content: getEdgeLabel,
+            "curve-style": getEdgeCurveStyle,
+            visibility: getEdgeVisibility
           }
         },
         {
@@ -423,6 +462,11 @@ const GraphVisualisation: React.FC<GraphVisualisationProps> = props => {
     // @ts-ignore
     cy.style().update();
   }, [disableInteraction]);
+
+  useEffect(() => {
+    // @ts-ignore
+    cy && cy.style().update();
+  }, [graphDisplayState]);
 
   useEffect(() => {
     if (!graphVisualisationRef.current) return;
