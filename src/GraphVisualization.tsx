@@ -493,6 +493,13 @@ class GraphVisualization extends React.Component<
     if (prevProps.graphDisplayState !== this.props.graphDisplayState) {
       this.restyle();
     }
+    if (prevState.layoutRunning !== this.state.layoutRunning && this.layout) {
+      if (this.state.layoutRunning) {
+        this.layout.run();
+      } else {
+        this.layout.stop();
+      }
+    }
   };
 
   static getDerivedStateFromProps(
