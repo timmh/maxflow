@@ -509,17 +509,19 @@ class GraphVisualization extends React.Component<
 
   render = () => {
     return (
-      <div
-        ref={ref => {
-          this.readyPromise.then(() => {
-            if (!this.container) {
-              this.container = ref;
-              this.reset();
-            }
-          });
-        }}
-        className="graph-visualization"
-      />
+      <div className="graph-visualization">
+        <div
+          className="graph-visualization__cytoscape"
+          ref={ref => {
+            this.readyPromise.then(() => {
+              if (!this.container) {
+                this.container = ref;
+                this.reset();
+              }
+            });
+          }}
+        />
+      </div>
     );
   };
 }
