@@ -142,16 +142,18 @@ class GraphVisualization extends React.Component<
         "text-valign": "center",
         "text-halign": "center",
         "font-family": "KaTeX_Math",
-        // "background-color": "white",
         "border-width": 3,
-        "border-color": "black",
+        "border-color": styleVariables.colorBlack,
         "border-style": (node: NodeSingular) =>
           node.data().type === "source"
             ? "double"
             : node.data().type === "sink"
             ? "dashed"
             : "solid",
-        "background-color": "white"
+        "background-color": "white",
+        "transition-property": "border-color",
+        "transition-duration": styleVariables.stepTransitionDuration,
+        "transition-timing-function": "ease"
       }
     },
     {
@@ -164,19 +166,23 @@ class GraphVisualization extends React.Component<
       selector: ".graph-edge",
       style: {
         "target-arrow-shape": "triangle",
-        "line-color": "black",
-        "target-arrow-color": "black",
+        color: styleVariables.colorBlack,
+        "line-color": styleVariables.colorBlack,
+        "target-arrow-color": styleVariables.colorBlack,
         "text-background-color": "white",
         "text-background-opacity": 1,
         "text-background-shape": "roundrectangle",
         "font-family": "KaTeX_Math",
         "font-size": 12,
-        content: (edge: EdgeSingular | NodeSingular) =>
+        label: (edge: EdgeSingular | NodeSingular) =>
           this.getEdgeLabel(edge as EdgeSingular),
         "curve-style": (edge: EdgeSingular | NodeSingular) =>
           this.getEdgeCurveStyle(edge as EdgeSingular),
         visibility: (edge: EdgeSingular | NodeSingular) =>
-          this.getEdgeVisibility(edge as EdgeSingular) as "none" | "visible"
+          this.getEdgeVisibility(edge as EdgeSingular) as "none" | "visible",
+        "transition-property": "line-color, target-arrow-color",
+        "transition-duration": styleVariables.stepTransitionDuration,
+        "transition-timing-function": "ease"
       }
     },
     {
