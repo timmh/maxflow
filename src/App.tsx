@@ -10,7 +10,6 @@ import { tgf2cyto, cyto2tgf } from "./utils/io";
 import assertValidGraph from "./utils/assertValidGraph";
 import GraphControls, { GraphDisplayState } from "./GraphControls";
 import FileSaver from "file-saver";
-import config from "./config";
 import { Graph, GraphMutation, Node } from "./CytoscapeGraph";
 import GraphVisualization from "./GraphVisualization";
 import * as styleVariables from "./variables.scss";
@@ -48,7 +47,7 @@ const App: React.FC = () => {
   const queueHighlightedLines = (newHighlightedLines: number[]) => {
     setHighlightedLines([
       newHighlightedLines,
-      ...highlightedLines.slice(0, config.highlightedLinesCount - 1)
+      ...highlightedLines.slice(0, styleVariables.highlightedLinesCount - 1)
     ]);
   };
   const [queueNodes, setQueueNodes] = useState<any[]>([]);

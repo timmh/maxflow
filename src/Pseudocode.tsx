@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import config from "./config";
+import * as styleVariables from "./variables.scss";
 
 // pseudocode.js has no type definitions, therefore the interface is declared here
 declare global {
@@ -31,7 +31,7 @@ const Pseudocode: React.FC<{
     const el = containerRef.current;
     if (!el) return;
     el.querySelectorAll(".ps-line").forEach(element => {
-      for (let t = 0; t < config.highlightedLinesCount; t++) {
+      for (let t = 0; t < styleVariables.highlightedLinesCount; t++) {
         element.classList.remove(`ps-line--highlighted-${t}`);
       }
     });
