@@ -70,7 +70,7 @@ button {
   }
 }
 
-.node-queue-visualization {
+.node-queue-stack-visualization {
   $size: 60px;
   $border-size: 2px;
   $border-color: $color-black;
@@ -132,6 +132,10 @@ button {
 }
 
 .controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
   &__button {
     &:not(:last-child) {
       margin-right: 10px;

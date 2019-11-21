@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import "./App.scss";
 import Pseudocode from "./Pseudocode";
-import NodeQueueVisualization from "./NodeQueueVisualization";
+import NodeQueueStackVisualization from "./NodeQueueStackVisualization";
 import Controls from "./Controls";
 import useInterval from "./utils/useInterval";
 import { useDropzone } from "react-dropzone";
@@ -20,16 +20,17 @@ interface Algorithm {
   pseudocode: string;
   labeledBlocks: { lines: [number, number]; color: string; label: string }[];
   implementation: (graph: Graph) => Generator<never, void, unknown>;
+  linearDataStructure: "queue" | "stack";
 }
 
 interface AlgorithmStepResult {
   highlightedLines: number[];
-  queueNodes: Node[];
+  linearNodes: Node[];
   graphMutations: GraphMutation[];
 }
 
 const App: React.FC = () => {
-  const [algorithmName] = useState("Edmonds-Karp");
+  const [algorithmName, setAlgorithmName] = useState("Edmonds-Karp");
   const [algorithm, setAlgorithm] = useState<Algorithm | null>(null);
   useEffect(() => {
     import(`./algorithms/${algorithmName}.ts`).then(mod =>
@@ -93,7 +94,11 @@ const App: React.FC = () => {
       setStepBackwardBufferIndex(stepBackwardBufferIndex + 1);
     }
     if (result) {
-      const { highlightedLines, queueNodes, graphMutations } = result;
+      const {
+        highlightedLines,
+        linearNodes: queueNodes,
+        graphMutations
+      } = result;
       if (highlightedLines) queueHighlightedLines(highlightedLines);
       if (queueNodes) setQueueNodes(queueNodes);
       graphMutations.forEach(graphMutation => graphMutation.apply());
@@ -114,7 +119,7 @@ const App: React.FC = () => {
       setQueueNodes([]);
       setHighlightedLines([]);
     } else {
-      const { highlightedLines, queueNodes } = result;
+      const { highlightedLines, linearNodes: queueNodes } = result;
       if (highlightedLines) setHighlightedLines([highlightedLines]);
       if (queueNodes) setQueueNodes(queueNodes);
     }
@@ -249,9 +254,21 @@ const App: React.FC = () => {
           stepBackward={stepBackwardBufferIndex > -1 ? stepBackward : undefined}
           stepForward={algorithmState !== "finished" ? stepForward : undefined}
           reset={reset}
+          algorithms={[
+            { label: "Edmonds-Karp", value: "Edmonds-Karp" },
+            {
+              label: "Ford-Fulkerson (depth-first)",
+              value: "Ford–Fulkerson-Depth-First"
+            }
+          ]}
+          currentAlgorithm={algorithmName}
+          setCurrentAlgorithm={algorithmName => setAlgorithmName(algorithmName)}
         />
         <Pseudocode algorithm={algorithm} highlightedLines={highlightedLines} />
-        <NodeQueueVisualization nodes={queueNodes} />
+        <NodeQueueStackVisualization
+          nodes={queueNodes}
+          mode={algorithm.linearDataStructure}
+        />
       </div>
     </div>
   );

@@ -14,57 +14,86 @@ const Controls: React.FC<{
   stepBackward?: () => void;
   stepForward?: () => void;
   reset: () => void;
-}> = ({ state, setState, stepBackward, stepForward, reset }) => {
+  algorithms: { value: string; label: string }[];
+  currentAlgorithm: string;
+  setCurrentAlgorithm: (algorithm: string) => void;
+}> = ({
+  state,
+  setState,
+  stepBackward,
+  stepForward,
+  reset,
+  algorithms,
+  currentAlgorithm,
+  setCurrentAlgorithm
+}) => {
   return (
     <div className="controls">
-      <button
-        title="Step Backward"
-        className="controls__button"
-        onClick={() => {
-          setState("manual");
-          stepBackward && stepBackward();
-        }}
-        disabled={state === "auto" || !stepBackward}
-      >
-        <FontAwesomeIcon size="2x" icon={faStepBackward} />
-      </button>
-      {state !== "auto" ? (
+      <div className="controls__buttons">
         <button
-          title="Start"
+          title="Step Backward"
           className="controls__button"
-          onClick={() => setState("auto")}
-          disabled={state === "finished"}
+          onClick={() => {
+            setState("manual");
+            stepBackward && stepBackward();
+          }}
+          disabled={state === "auto" || !stepBackward}
         >
-          <FontAwesomeIcon size="2x" icon={faPlay} />
+          <FontAwesomeIcon size="2x" icon={faStepBackward} />
         </button>
-      ) : (
+        {state !== "auto" ? (
+          <button
+            title="Start"
+            className="controls__button"
+            onClick={() => setState("auto")}
+            disabled={state === "finished"}
+          >
+            <FontAwesomeIcon size="2x" icon={faPlay} />
+          </button>
+        ) : (
+          <button
+            title="Pause"
+            className="controls__button"
+            onClick={() => setState("manual")}
+          >
+            <FontAwesomeIcon size="2x" icon={faPause} />
+          </button>
+        )}
         <button
-          title="Pause"
+          title="Step Forward"
           className="controls__button"
-          onClick={() => setState("manual")}
+          onClick={() => {
+            setState("manual");
+            stepForward && stepForward();
+          }}
+          disabled={state === "auto" || !stepForward}
         >
-          <FontAwesomeIcon size="2x" icon={faPause} />
+          <FontAwesomeIcon size="2x" icon={faStepForward} />
         </button>
-      )}
-      <button
-        title="Step Forward"
-        className="controls__button"
-        onClick={() => {
-          setState("manual");
-          stepForward && stepForward();
-        }}
-        disabled={state === "auto" || !stepForward}
-      >
-        <FontAwesomeIcon size="2x" icon={faStepForward} />
-      </button>
-      <button
-        title="Reset"
-        className="controls__button"
-        disabled={state === "stopped"}
-        onClick={() => reset()}
-      >
-        <FontAwesomeIcon size="2x" icon={faUndo} />
-      </button>
+        <button
+          title="Reset"
+          className="controls__button"
+          disabled={state === "stopped"}
+          onClick={() => reset()}
+        >
+          <FontAwesomeIcon size="2x" icon={faUndo} />
+        </button>
+      </div>
+      <div className="controls__select">
+        <select
+          value={currentAlgorithm}
+          onChange={evt => {
+            setCurrentAlgorithm(evt.target.value);
+          }}
+          disabled={state !== "stopped"}
+        >
+          {algorithms.map(algorithm => (
+            <option key={algorithm.value} value={algorithm.value}>
+              {algorithm.label}
+            </option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 };

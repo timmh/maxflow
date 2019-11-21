@@ -9,22 +9,22 @@ import {
 } from "../CytoscapeGraph";
 
 export default {
-  name: "Edmonds-Karp",
-  linearDataStructure: "queue",
+  name: "Ford–Fulkerson-Depth-First",
+  linearDataStructure: "stack",
   pseudocode: String.raw`
     \begin{algorithm}
     \begin{algorithmic}
-    \PROCEDURE{Edmonds-Karp}{$G=(V,\ E),\ s \in V,\ t \in V$}
+    \PROCEDURE{Ford-Fulkerson}{$G=(V,\ E),\ s \in V,\ t \in V$}
         \STATE $f = 0$
         \REPEAT
             \STATE $p = \left[\ \right]$
-            \STATE $q = \left[\ s\ \right]$ \COMMENT{create queue}
-            \WHILE{$q_\mathrm{length}$ > 0}
-                \STATE $c =$ \CALL{dequeue}{$q$}
+            \STATE $u = \left[\ s\ \right]$ \COMMENT{create stack}
+            \WHILE{$u_\mathrm{height}$ > 0}
+                \STATE $c =$ \CALL{pop}{$u$}
                 \FOR{edge $e$ originating from $c$}
                     \IF{$e_\mathrm{target} \notin p$ \AND $e_\mathrm{target} \neq s$ \AND $e_\mathrm{capacity} > e_\mathrm{flow}$}
                         \STATE $p[e_\mathrm{target}] = e$
-                        \STATE \CALL{enqueue}{$q$, $e_\mathrm{target}$}
+                        \STATE \CALL{push}{$u$, $e_\mathrm{target}$}
                     \ENDIF
                 \ENDFOR
             \ENDWHILE
@@ -47,7 +47,7 @@ export default {
     \end{algorithm}
   `,
   labeledBlocks: [
-    { lines: [4, 14], color: "#ffdcdc", label: "Breadth-first search" },
+    { lines: [4, 14], color: "#ffdcdc", label: "Depth-first search" },
     {
       lines: [15, 26],
       color: "#e3ffff",
@@ -68,25 +68,25 @@ export default {
     let pred: { [key: string]: Edge };
 
     do {
-      const q = [sourceNode];
+      const u = [sourceNode];
       pred = {};
 
       const mutationsToUndoAfterSearch = [];
 
       yield {
         highlightedLines: [4, 5],
-        linearNodes: q,
+        linearNodes: u,
         graphMutations: []
       };
 
-      while (q.length > 0) {
-        const cur = q.shift()!;
+      while (u.length > 0) {
+        const cur = u.pop()!;
         mutationsToUndoAfterSearch.push(
           new GraphNodeHighlightMutation(cur).inverse()
         );
         yield {
           highlightedLines: [7],
-          linearNodes: q,
+          linearNodes: u,
           graphMutations: [new GraphNodeHighlightMutation(cur)]
         };
         for (let edge of cur.getOutgoingEdges()) {
@@ -96,14 +96,14 @@ export default {
             edge.getCapacity() > edge.getFlow()
           ) {
             pred[edge.getTargetNode().getId()] = edge;
-            q.push(edge.getTargetNode());
+            u.push(edge.getTargetNode());
           }
           mutationsToUndoAfterSearch.push(
             new GraphEdgeHighlightMutation(edge).inverse()
           );
           yield {
             highlightedLines: [10, 11],
-            linearNodes: q,
+            linearNodes: u,
             graphMutations: [new GraphEdgeHighlightMutation(edge)]
           };
         }
@@ -129,7 +129,7 @@ export default {
 
         yield {
           highlightedLines: [16],
-          linearNodes: q,
+          linearNodes: u,
           graphMutations: [
             ...mutationsToUndoAfterSearch,
             ...foundPathHighlightMutations
@@ -148,7 +148,7 @@ export default {
           const reverseCurrentEdge = currentEdge.getReverseEdge();
           yield {
             highlightedLines: [22, 23],
-            linearNodes: q,
+            linearNodes: u,
             graphMutations: [
               new GraphEdgeFlowMutation(currentEdge, df),
               new GraphEdgeFlowMutation(reverseCurrentEdge, -df)
@@ -159,7 +159,7 @@ export default {
         flow = flow + df;
         yield {
           highlightedLines: [25],
-          linearNodes: q,
+          linearNodes: u,
           graphMutations: mutationsToUndoAfterUpdate
         };
       }
