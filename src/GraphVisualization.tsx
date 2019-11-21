@@ -253,18 +253,6 @@ class GraphVisualization extends React.Component<
       style: this.getStyle()
     });
 
-    this.cy!.on("mouseover", ".graph-node", () => {
-      if (this.layout) {
-        this.layout.stop();
-      }
-    });
-
-    this.cy!.on("mouseout", ".graph-node", () => {
-      if (this.layout && this.state.layoutRunning) {
-        this.layout.start();
-      }
-    });
-
     this.cy!.on("add remove data", ".graph-node, .graph-edge", () => {
       // @ts-ignore
       this.restyle();
@@ -291,6 +279,7 @@ class GraphVisualization extends React.Component<
     this.edgehandles = this.cy.edgehandles({
       preview: false,
       handleNodes: ".graph-node",
+      hideHandleOnSourceNodeMove: false,
       edgeParams: () => ({
         data: {
           flow: 0,
