@@ -79,7 +79,7 @@ export default {
         graphMutations: []
       };
 
-      while (q.length > 0) {
+      while (q.length > 0 && !pred[sinkNode.getId()]) {
         const cur = q.shift()!;
         mutationsToUndoAfterSearch.push(
           new GraphNodeHighlightMutation(cur).inverse()
@@ -106,6 +106,7 @@ export default {
             linearNodes: q,
             graphMutations: [new GraphEdgeHighlightMutation(edge)]
           };
+          if (edge.getTargetNode().isEqualTo(sinkNode)) break;
         }
       }
       if (pred[sinkNode.getId()] !== undefined) {
