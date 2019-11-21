@@ -100,7 +100,9 @@ const App: React.FC = () => {
       } = result;
       if (highlightedLines) queueHighlightedLines(highlightedLines);
       if (queueNodes) setQueueNodes(queueNodes);
-      graphMutations.forEach(graphMutation => graphMutation.apply());
+      visRef.cy!.batch(() => {
+        graphMutations.forEach(graphMutation => graphMutation.apply());
+      });
     }
   };
 
@@ -110,10 +112,12 @@ const App: React.FC = () => {
     const currentResult = stepBackwardBuffer[stepBackwardBufferIndex];
     const result = stepBackwardBuffer[stepBackwardBufferIndex - 1];
     setStepBackwardBufferIndex(stepBackwardBufferIndex - 1);
-    currentResult.graphMutations
-      .slice()
-      .reverse()
-      .forEach(graphMutation => graphMutation.inverse().apply());
+    visRef.cy!.batch(() => {
+      currentResult.graphMutations
+        .slice()
+        .reverse()
+        .forEach(graphMutation => graphMutation.inverse().apply());
+    });
     if (!result) {
       setQueueNodes([]);
       setHighlightedLines([]);
@@ -125,14 +129,17 @@ const App: React.FC = () => {
   };
 
   const reset = () => {
-    stepBackwardBuffer
-      .slice()
-      .reverse()
-      .forEach(result => {
-        result.graphMutations
+    visRef &&
+      visRef.cy!.batch(() => {
+        stepBackwardBuffer
           .slice()
           .reverse()
-          .forEach(graphMutation => graphMutation.inverse().apply());
+          .forEach(result => {
+            result.graphMutations
+              .slice()
+              .reverse()
+              .forEach(graphMutation => graphMutation.inverse().apply());
+          });
       });
     setAlgorithmState("stopped");
     setHighlightedLines([]);
