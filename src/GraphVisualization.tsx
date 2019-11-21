@@ -5,9 +5,7 @@ import cytoscape, {
   EdgeCollection
 } from "cytoscape";
 import cola from "cytoscape-cola";
-import "./cytoscape-cola.d";
 import edgehandles from "cytoscape-edgehandles";
-import "./cytoscape-edgehandles.d";
 import FontFaceObserver from "fontfaceobserver";
 import cxtmenu from "cytoscape-cxtmenu";
 import Swal from "sweetalert2";
