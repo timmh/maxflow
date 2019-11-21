@@ -213,14 +213,12 @@ class GraphVisualization extends React.Component<
     {
       selector: ".eh-source",
       style: {
-        "border-width": 2,
         "border-color": styleVariables.colorHandles
       }
     },
     {
       selector: ".eh-target",
       style: {
-        "border-width": 2,
         "border-color": styleVariables.colorHandles
       }
     },
