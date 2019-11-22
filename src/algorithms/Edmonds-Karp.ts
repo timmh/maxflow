@@ -57,9 +57,10 @@ export default {
   implementation: function*(
     graph: Graph
   ): IterableIterator<{
-    highlightedLines: number[];
+    highlightedLines?: number[];
     linearNodes: Node[];
-    graphMutations: GraphMutation[];
+    graphMutations?: GraphMutation[];
+    done?: true;
   }> {
     const sourceNode = graph.getSourceNode();
     const sinkNode = graph.getSinkNode();
@@ -75,8 +76,7 @@ export default {
 
       yield {
         highlightedLines: [4, 5],
-        linearNodes: q,
-        graphMutations: []
+        linearNodes: q
       };
 
       while (q.length > 0 && !pred[sinkNode.getId()]) {
@@ -168,7 +168,7 @@ export default {
     yield {
       highlightedLines: [28],
       linearNodes: [],
-      graphMutations: []
+      done: true
     };
     return flow;
   }
