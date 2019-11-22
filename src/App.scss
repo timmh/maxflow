@@ -154,21 +154,18 @@ button {
     width: 100%;
     display: inline-block;
     left: 0;
-    background: var(--block-color);
+    background-color: var(--block-color);
     z-index: -1;
     line-height: 1.4;
     transition: 400ms ease background-color;
   }
 
   @for $i from $highlighted-lines-count through 0 {
-    $highlight-color: rgba(
-      $color-highlight,
-      (1 - ($i) / ($highlighted-lines-count))
-    );
     .ps-line--highlighted-#{$i}::before {
-      background: linear-gradient(var(--block-color), var(--block-color)),
-        linear-gradient($highlight-color, $highlight-color);
-      background-blend-mode: overlay;
+      background-color: lighten(
+        $color-highlight,
+        (($i) / ($highlighted-lines-count)) * 50%
+      );
     }
   }
 
