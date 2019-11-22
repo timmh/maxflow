@@ -36,11 +36,25 @@ const initialStepResult = {
   linearNodes: [],
   graphMutations: []
 };
+
+const preferencesKey = "maxflow_preferences";
+const preferences = {
+  algorithmName: algorithms[0].filename,
+  autoLayout: true,
+  graphDisplayState: "flow" as GraphDisplayState
+};
+try {
+  Object.assign(preferences, JSON.parse(localStorage.getItem(preferencesKey)!));
+} catch (err) {
+  localStorage.removeItem(preferencesKey);
 }
+const setPreferences = (preferences: Object) => {
+  localStorage.setItem(preferencesKey, JSON.stringify(preferences));
+};
 
 const App: React.FC = () => {
   const [visRef, setVisRef] = useState<GraphVisualization | null>(null);
-  const [algorithmName, setAlgorithmName] = useState(algorithms[0].filename);
+  const [algorithmName, setAlgorithmName] = useState(preferences.algorithmName);
   const [algorithm, setAlgorithm] = useState<Algorithm | null>(null);
   useEffect(() => {
     import(`./algorithms/${algorithmName}.ts`).then(mod =>
@@ -62,9 +76,9 @@ const App: React.FC = () => {
   const [algorithmState, setAlgorithmState] = useState<
     "stopped" | "auto" | "manual" | "finished"
   >("stopped");
-  const [autoLayout, setAutoLayout] = useState(true);
+  const [autoLayout, setAutoLayout] = useState(preferences.autoLayout);
   const [graphDisplayState, setGraphDisplayState] = useState<GraphDisplayState>(
-    "flow"
+    preferences.graphDisplayState
   );
 
   const {
@@ -217,7 +231,10 @@ const App: React.FC = () => {
       <div className="app__left">
         <GraphControls
           autoLayout={autoLayout}
-          setAutoLayout={setAutoLayout}
+          setAutoLayout={autoLayout => {
+            setAutoLayout(autoLayout);
+            setPreferences({ ...preferences, autoLayout });
+          }}
           onImport={() => openDropzone()}
           onExport={() =>
             visRef &&
@@ -238,7 +255,10 @@ const App: React.FC = () => {
             );
           }}
           graphDisplayState={graphDisplayState}
-          setGraphDisplayState={setGraphDisplayState}
+          setGraphDisplayState={(graphDisplayState: GraphDisplayState) => {
+            setGraphDisplayState(graphDisplayState);
+            setPreferences({ ...preferences, graphDisplayState });
+          }}
         />
         <GraphVisualization
           visualizationRef={nextVisualizationRef => {
@@ -261,7 +281,10 @@ const App: React.FC = () => {
             value: filename
           }))}
           currentAlgorithm={algorithmName}
-          setCurrentAlgorithm={algorithmName => setAlgorithmName(algorithmName)}
+          setCurrentAlgorithm={algorithmName => {
+            setAlgorithmName(algorithmName);
+            setPreferences({ ...preferences, algorithmName });
+          }}
         />
         <Pseudocode algorithm={algorithm} highlightedLines={highlightedLines} />
         <NodeQueueStackVisualization

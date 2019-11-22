@@ -272,7 +272,7 @@ class GraphVisualization extends React.Component<
       this.restyle();
     });
 
-    if (this.state.layoutRunning) this.resetLayout();
+    this.resetLayout();
     if (!this.state.interactionDisabled) this.enableMenus();
 
     // @ts-ignore
