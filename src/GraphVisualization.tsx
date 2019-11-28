@@ -250,6 +250,7 @@ class GraphVisualization extends React.Component<
       boxSelectionEnabled: false,
       minZoom: 0.5,
       maxZoom: 5,
+      wheelSensitivity: 0.1,
       style: this.getStyle()
     });
 
