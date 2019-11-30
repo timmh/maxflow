@@ -193,3 +193,27 @@ button {
     line-height: 1.4;
   }
 }
+
+.header {
+  flex: 1;
+}
+
+.footer {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  white-space: pre;
+  padding: 10px;
+
+  a {
+    color: $color-black;
+    text-decoration: none;
+    transition: opacity 200ms ease;
+
+    &:hover {
+      opacity: 0.75;
+      text-decoration: underline;
+    }
+  }
+}

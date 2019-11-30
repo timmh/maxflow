@@ -15,6 +15,7 @@ import GraphVisualization from "./GraphVisualization";
 import * as styleVariables from "./variables.scss";
 import useQueue from "./utils/useQueue";
 import algorithms from "./algorithms";
+import Footer from "./Footer";
 
 /**
  * The interface each algorithm (from the algorithms directory) has
@@ -284,6 +285,7 @@ const App: React.FC = () => {
         />
       </div>
       <div className="app__right">
+        <div className="header" />
         <Controls
           state={algorithmState}
           setState={setAlgorithmState}
@@ -305,6 +307,7 @@ const App: React.FC = () => {
           nodes={linearNodes}
           mode={algorithm.linearDataStructure}
         />
+        <Footer />
       </div>
     </div>
   );
