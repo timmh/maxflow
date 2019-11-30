@@ -471,12 +471,10 @@ class GraphVisualization extends React.Component<
     ) {
       if (this.state.interactionDisabled) {
         this.disableMenus();
-        this.cy.nodes().ungrabify();
         // @ts-ignore
         this.edgehandles.disable();
       } else {
         this.enableMenus();
-        this.cy.nodes().grabify();
         // @ts-ignore
         this.edgehandles.enable();
       }
