@@ -1,5 +1,13 @@
 import cytoscape, { EdgeSingular } from "cytoscape";
 
+/**
+ * Parses a (subset of)
+ * [Trivial Graph Format (TGF)](https://en.wikipedia.org/wiki/Trivial_Graph_Format)
+ * and returns [cytoscape.js JSON](https://js.cytoscape.org/#notation/elements-json)
+ *
+ * @param tgf the graph in TGF format
+ * @returns cytoscape element definitions
+ */
 const tgf2cyto: (tgf: String) => cytoscape.ElementDefinition[] = (
   tgf: String
 ) => {
@@ -73,6 +81,15 @@ const tgf2cyto: (tgf: String) => cytoscape.ElementDefinition[] = (
   return elements;
 };
 
+/**
+ * Takes a [cytoscape.js](https://js.cytoscape.org/) instance
+ * and returns the corresponding (subset of)
+ * [Trivial Graph Format (TGF)](https://en.wikipedia.org/wiki/Trivial_Graph_Format)
+ * representation
+ *
+ * @param cy the cytoscape.js instance
+ * @returns TGF string representation
+ */
 const cyto2tgf = (cy: cytoscape.Core) => {
   const nodes = cy
     .nodes(".graph-node")

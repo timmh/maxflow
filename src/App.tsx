@@ -16,14 +16,22 @@ import * as styleVariables from "./variables.scss";
 import useQueue from "./utils/useQueue";
 import algorithms from "./algorithms";
 
-interface Algorithm {
+/**
+ * The interface each algorithm (from the algorithms directory) has
+ * to implement
+ */
+export interface Algorithm {
   name: string;
   pseudocode: string;
   labeledBlocks: { lines: [number, number]; color: string; label: string }[];
-  implementation: (graph: Graph) => Generator<never, void, unknown>;
+  implementation: (graph: Graph) => Generator<AlgorithmStepResult, void, []>;
   linearDataStructure: "queue" | "stack";
 }
 
+/**
+ * Each call to the algorithm instance's `next()` method yields an
+ * object confoming to this interface
+ */
 interface AlgorithmStepResult {
   highlightedLines?: number[];
   linearNodes: Node[];
@@ -31,12 +39,14 @@ interface AlgorithmStepResult {
   done?: true;
 }
 
+// the "empty" step result, shown before the algorithm is run
 const initialStepResult = {
   highlightedLines: [],
   linearNodes: [],
   graphMutations: []
 };
 
+// code for loading and persisting preferences in localStorage
 const preferencesKey = "maxflow_preferences";
 const preferences = {
   algorithmName: algorithms[0].filename,
@@ -52,6 +62,10 @@ const setPreferences = (preferences: Object) => {
   localStorage.setItem(preferencesKey, JSON.stringify(preferences));
 };
 
+/**
+ * The App component is responsible for maintaining the
+ * high-level state of the application
+ */
 const App: React.FC = () => {
   const [visRef, setVisRef] = useState<GraphVisualization | null>(null);
   const [algorithmName, setAlgorithmName] = useState(preferences.algorithmName);

@@ -13,6 +13,13 @@ const modeToVariable = {
   stack: "u"
 };
 
+/**
+ * Provides a linear visualization of nodes, either as a queue or as a stack
+ *
+ * @param props component props
+ * @param props.nodes the nodes to be visualized
+ * @param props.mode whether to visualize a queue or a stack
+ */
 const NodeQueueStackVisualization = ({
   nodes,
   mode

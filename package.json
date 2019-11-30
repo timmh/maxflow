@@ -24,11 +24,12 @@
     "react-dropzone": "^10.2.0",
     "react-scripts": "3.2.0",
     "sweetalert2": "^9.3.16",
+    "typedoc": "^0.15.3",
     "typescript": "^3.7.2"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && typedoc --out build/docs src",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

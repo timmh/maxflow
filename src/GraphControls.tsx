@@ -3,6 +3,18 @@ import Switch from "./Switch";
 
 export type GraphDisplayState = "flow" | "residual" | "original_flow";
 
+/**
+ * The GraphControls component renders graph display options
+ * and I/O actions
+ *
+ * @param props component props
+ * @param props.autoLayout whether the layout runs continuously
+ * @param props.setAutoLayout updates the autoLayout prop
+ * @param props.onImport called when the import button is pressed
+ * @param props.onExport called when the export button is pressed
+ * @param props.onExportPng called when the export PNG button is pressed
+ * @param props.setGraphDisplayState updates the [[GraphDisplayState]]
+ */
 const GraphControls = ({
   autoLayout,
   setAutoLayout,

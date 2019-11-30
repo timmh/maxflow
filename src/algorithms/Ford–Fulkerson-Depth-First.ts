@@ -8,6 +8,8 @@ import {
   GraphEdgeHighlightMutation
 } from "../CytoscapeGraph";
 
+/** The Ford-Fulkerson algorithm using depth-first search */
+
 export default {
   name: "Ford–Fulkerson-Depth-First",
   linearDataStructure: "stack",

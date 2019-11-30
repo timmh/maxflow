@@ -1,5 +1,12 @@
 import { useRef, useEffect } from "react";
 
+/**
+ * A simple interval react hook
+ *
+ * @param callback is called at the specified frequency
+ * @param delay in milliseconds, defines the frequency
+ * @param dependencies which should invalidate the callback
+ */
 function useInterval(
   callback: () => void,
   delay: number,

@@ -1,18 +1,24 @@
 import React, { useRef, useEffect } from "react";
 import * as styleVariables from "./variables.scss";
+import { Algorithm } from "./App";
 
-// pseudocode.js has no type definitions, therefore the interface is declared here
+// pseudocode.js is global and has no type definitions
+// therefore it's interface is declared here
 declare global {
   const pseudocode: {
     render: (pseudocode: string, el: HTMLElement, options: Object) => void;
   };
 }
 
+/**
+ * The Pseudocode component shows the latex pseudocode listing
+ *
+ * @param props component props
+ * @param props.algorithm the selected [[Algorithm]]
+ * @param props.highlightedLines the line numbers which should be highlighted
+ */
 const Pseudocode: React.FC<{
-  algorithm: {
-    pseudocode: string;
-    labeledBlocks: { lines: [number, number]; color: string; label: string }[];
-  };
+  algorithm: Algorithm;
   highlightedLines: number[][];
 }> = ({ algorithm, highlightedLines }) => {
   const containerRef = useRef<HTMLDivElement>(null);

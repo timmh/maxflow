@@ -8,6 +8,8 @@ import {
   GraphEdgeHighlightMutation
 } from "../CytoscapeGraph";
 
+/** The Edmonds-Karp algorithm */
+
 export default {
   name: "Edmonds-Karp",
   linearDataStructure: "queue",

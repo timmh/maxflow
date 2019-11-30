@@ -1,5 +1,10 @@
 import cytoscape from "cytoscape";
 
+/**
+ * validates the graph for flow problems
+ *
+ * @param cy the cytoscape.js instance
+ */
 const assertValidGraph = (cy: cytoscape.Core) => {
   if (
     cy.nodes('node[type="source"]').length !== 1 ||

@@ -1,10 +1,20 @@
 import cytoscape from "cytoscape";
 
+/**
+ * The interface each graph mutation (both visual and non-visual)
+ * has to conform to
+ */
 export interface GraphMutation {
+  /** applies the mutation on the cytoscape.js instance */
   apply: () => void;
+
+  /** returns the inverse mutation, primarily used for backstepping */
   inverse: () => GraphMutation;
 }
 
+/**
+ * Mutates the flow along an edge
+ */
 export class GraphEdgeFlowMutation implements GraphMutation {
   _edge: Edge;
   _df: number;
@@ -21,6 +31,9 @@ export class GraphEdgeFlowMutation implements GraphMutation {
   inverse = () => new GraphEdgeFlowMutation(this._edge, -this._df);
 }
 
+/**
+ * (Un)highlights an edge
+ */
 export class GraphEdgeHighlightMutation implements GraphMutation {
   _edge: Edge;
   _mode: "add" | "remove";
@@ -45,6 +58,9 @@ export class GraphEdgeHighlightMutation implements GraphMutation {
     );
 }
 
+/**
+ * (Un)highlights a node
+ */
 export class GraphNodeHighlightMutation implements GraphMutation {
   _node: Node;
   _mode: "add" | "remove";
@@ -69,6 +85,10 @@ export class GraphNodeHighlightMutation implements GraphMutation {
     );
 }
 
+/**
+ * The Edge class wraps cytoscape.js edges to allow the algorithms to be less
+ * dependent on the actual graph implementation
+ */
 export class Edge {
   _cyEdge: cytoscape.EdgeSingular;
 
@@ -88,6 +108,10 @@ export class Edge {
   isEqualTo = (otherEdge: Edge) => this._cyEdge.id() === otherEdge._cyEdge.id();
 }
 
+/**
+ * The Node class wraps cytoscape.js nodes to allow the algorithms to be less
+ * dependent on the actual graph implementation
+ */
 export class Node {
   _cyNode: cytoscape.NodeSingular;
 
@@ -122,6 +146,10 @@ export class Node {
   isEqualTo = (otherNode: Node) => this._cyNode.id() === otherNode._cyNode.id();
 }
 
+/**
+ * The Graph class wraps the cytoscape.js graph to allow the algorithms to be less
+ * dependent on the actual graph implementation
+ */
 export class Graph {
   _cy: cytoscape.Core;
 
