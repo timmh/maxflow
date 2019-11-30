@@ -23,7 +23,6 @@ button {
   display: flex;
   align-items: stretch;
   height: 100vh;
-  min-height: 800px;
 
   &__left {
     min-width: 325px;
@@ -74,6 +73,7 @@ button {
   $size: 60px;
   $border-size: 2px;
   $border-color: $color-black;
+  margin-bottom: 10px;
 
   display: flex;
   align-items: center;
@@ -100,6 +100,10 @@ button {
 
   &__elements-back {
     margin-left: -$border-size;
+
+    .node-queue-stack-visualization__element {
+      border-right: none;
+    }
   }
 
   &__element {
@@ -135,6 +139,8 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom: 2px solid $color-black;
+  padding: 10px;
 
   &__button {
     &:not(:last-child) {
@@ -145,6 +151,13 @@ button {
 
 .pseudocode {
   position: relative;
+  flex-shrink: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  .ps-root .ps-algorithm {
+    border: none;
+  }
 
   .ps-line::before {
     content: "|";
