@@ -82,6 +82,18 @@ export default {
       };
 
       while (u.length > 0 && !pred[sinkNode.getId()]) {
+        const highlightedEdge = pred[u[u.length - 1].getId()];
+        if (highlightedEdge) {
+          mutationsToUndoAfterSearch.push(
+            new GraphEdgeHighlightMutation(highlightedEdge).inverse()
+          );
+          yield {
+            highlightedLines: [10, 11],
+            linearNodes: u,
+            graphMutations: [new GraphEdgeHighlightMutation(highlightedEdge)]
+          };
+        }
+
         const cur = u.pop()!;
         mutationsToUndoAfterSearch.push(
           new GraphNodeHighlightMutation(cur).inverse()
@@ -100,13 +112,9 @@ export default {
             pred[edge.getTargetNode().getId()] = edge;
             u.push(edge.getTargetNode());
           }
-          mutationsToUndoAfterSearch.push(
-            new GraphEdgeHighlightMutation(edge).inverse()
-          );
           yield {
             highlightedLines: [10, 11],
-            linearNodes: u,
-            graphMutations: [new GraphEdgeHighlightMutation(edge)]
+            linearNodes: u
           };
           if (edge.getTargetNode().isEqualTo(sinkNode)) break;
         }
