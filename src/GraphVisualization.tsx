@@ -13,10 +13,12 @@ import defaultHash from "./utils/defaultHash";
 import * as styleVariables from "./variables.scss";
 import { cyto2tgf, tgf2cyto } from "./utils/io";
 import { GraphDisplayState } from "./GraphControls";
+import nodeHtmlLabel from "cytoscape-node-html-label";
 
 cytoscape.use(cola);
 cytoscape.use(edgehandles);
 cytoscape.use(cxtmenu);
+nodeHtmlLabel(cytoscape);
 
 const graphToHash = (cy: cytoscape.Core) => {
   return `#${encodeURIComponent(cyto2tgf(cy))}`;
@@ -136,7 +138,6 @@ class GraphVisualization extends React.Component<
       style: {
         width: styleVariables.nodeSize,
         height: styleVariables.nodeSize,
-        content: (node: NodeSingular) => `${node.data("label")}`,
         "text-valign": "center",
         "text-halign": "center",
         "font-family": "KaTeX_Math",
@@ -253,6 +254,36 @@ class GraphVisualization extends React.Component<
       wheelSensitivity: 0.1,
       style: this.getStyle()
     });
+
+    // @ts-ignore
+    this.cy.nodeHtmlLabel([
+      {
+        query: ".graph-node",
+        fontFamily: "KaTeX_Math",
+        tpl: (data: any) => {
+          const hasMetadata =
+            typeof data.height === "number" || typeof data.excess === "number";
+
+          return `
+          <div style="font-family: KaTeX_Math; text-align: center; line-height: 12px;">
+          <div style="font-size: ${hasMetadata ? 12 : 16}px;">${
+            data.label
+          }</div>
+          ${
+            typeof data.height === "number"
+              ? `<div style="font-size: 10px;">h=${data.height}</div>`
+              : ""
+          }
+          ${
+            typeof data.excess === "number"
+              ? `<div  style="font-size: 10px;">e=${data.excess}</div>`
+              : ""
+          }
+          </div>
+        `;
+        }
+      }
+    ]);
 
     this.cy!.on("add remove data", ".graph-node, .graph-edge", () => {
       // @ts-ignore

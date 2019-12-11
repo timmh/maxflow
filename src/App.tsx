@@ -26,7 +26,7 @@ export interface Algorithm {
   pseudocode: string;
   labeledBlocks: { lines: [number, number]; color: string; label: string }[];
   implementation: (graph: Graph) => Generator<AlgorithmStepResult, void, []>;
-  linearDataStructure: "queue" | "stack";
+  linearDataStructure: "queue" | "stack" | "none";
 }
 
 /**
@@ -170,6 +170,7 @@ const App: React.FC = () => {
             .reverse()
             .forEach(graphMutation => graphMutation.inverse().apply());
         });
+      visRef.cy!.$(".graph-node").removeData("height excess");
     });
     setAlgorithmState("stopped");
     resetHighlightedLines([]);
@@ -303,10 +304,14 @@ const App: React.FC = () => {
           }}
         />
         <Pseudocode algorithm={algorithm} highlightedLines={highlightedLines} />
-        <NodeQueueStackVisualization
-          nodes={linearNodes}
-          mode={algorithm.linearDataStructure}
-        />
+        {algorithm.linearDataStructure !== "none" ? (
+          <NodeQueueStackVisualization
+            nodes={linearNodes}
+            mode={algorithm.linearDataStructure}
+          />
+        ) : (
+          <div className="horizontal-divider" />
+        )}
         <Footer />
       </div>
     </div>

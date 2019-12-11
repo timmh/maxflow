@@ -69,6 +69,11 @@ button {
   }
 }
 
+.horizontal-divider {
+  width: 100%;
+  border-bottom: 2px solid $color-black;
+}
+
 .node-queue-stack-visualization {
   $size: 60px;
   $border-size: 2px;

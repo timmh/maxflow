@@ -13,5 +13,9 @@ export default [
   {
     label: "Ford-Fulkerson (depth-first)",
     filename: "Ford–Fulkerson-Depth-First"
+  },
+  {
+    label: "Push-Relabel (generic)",
+    filename: "Push-Relabel"
   }
 ];
