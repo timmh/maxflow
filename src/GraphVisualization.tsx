@@ -343,7 +343,7 @@ class GraphVisualization extends React.Component<
                   source: edge.data("target"),
                   target: edge.data("source"),
                   flow: 0,
-                  capacity: 0
+                  capacity: 1
                 },
                 group: "edges",
                 classes: "graph-edge"
