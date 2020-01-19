@@ -42,9 +42,11 @@ const GraphControls = ({
         />
         Autolayout
       </label>
-      <button onClick={() => onImport()}>Import</button>
-      <button onClick={() => onExport()}>Export</button>
-      <button onClick={() => onExportPng()}>Export PNG</button>
+      <div>
+        <button onClick={() => onImport()}>Import</button>
+        <button onClick={() => onExport()}>Export</button>
+        <button onClick={() => onExportPng()}>Export PNG</button>
+      </div>
       <Switch
         choices={[
           { value: "flow", label: "Flow" },
