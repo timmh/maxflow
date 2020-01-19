@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import * as styleVariables from "./variables.scss";
-import { Algorithm } from "./App";
+import { Algorithm, AlgorithmPseudocodeArgs } from "./algorithm";
 
 // pseudocode.js is global and has no type definitions
 // therefore it's interface is declared here
@@ -20,18 +20,19 @@ declare global {
 const Pseudocode: React.FC<{
   algorithm: Algorithm;
   highlightedLines: number[][];
-}> = ({ algorithm, highlightedLines }) => {
+  algorithmPseudocodeArgs: AlgorithmPseudocodeArgs;
+}> = ({ algorithm, highlightedLines, algorithmPseudocodeArgs }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
     el.innerHTML = "";
 
-    pseudocode.render(algorithm.pseudocode, el, {
+    pseudocode.render(algorithm.pseudocode(algorithmPseudocodeArgs), el, {
       lineNumber: true
       // noEnd: true
     });
-  }, [algorithm]);
+  }, [algorithm, algorithmPseudocodeArgs]);
 
   useEffect(() => {
     const el = containerRef.current;

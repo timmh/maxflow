@@ -31,7 +31,7 @@ const hashToGraph = (hash: string) => {
 
 const getNewNodeLabel = () =>
   String.fromCharCode(
-    "A".charCodeAt(0) + Math.random() * ("Z".charCodeAt(0) - "A".charCodeAt(0))
+    "a".charCodeAt(0) + Math.random() * ("z".charCodeAt(0) - "a".charCodeAt(0))
   );
 
 interface GraphVisualizationProps {
@@ -39,6 +39,7 @@ interface GraphVisualizationProps {
   disableInteraction: boolean;
   autoLayout: boolean;
   graphDisplayState: GraphDisplayState;
+  onChange?: () => void;
 }
 
 interface GraphVisualizationState {
@@ -290,6 +291,8 @@ class GraphVisualization extends React.Component<
       this.restyle();
 
       if (!this.cy || this.state.interactionDisabled) return;
+
+      if (this.props.onChange) this.props.onChange();
 
       const exp = graphToHash(this.cy);
       // @ts-ignore

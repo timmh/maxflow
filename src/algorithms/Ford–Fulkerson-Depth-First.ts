@@ -7,30 +7,30 @@ import {
   GraphNodeHighlightMutation,
   GraphEdgeHighlightMutation
 } from "../CytoscapeGraph";
+import { Algorithm } from "../algorithm";
 
 /** The Ford-Fulkerson algorithm using depth-first search */
-
-export default {
+const FordFulkerson: Algorithm = {
   name: "Ford–Fulkerson-Depth-First",
   linearDataStructure: "stack",
-  pseudocode: String.raw`
+  pseudocode: ({ sourceName, sinkName }) => String.raw`
     \begin{algorithm}
     \begin{algorithmic}
-    \PROCEDURE{Ford-Fulkerson}{$G=(V,\ E),\ s \in V,\ t \in V$}
+    \PROCEDURE{Ford-Fulkerson}{$G=(V,\ E),\ ${sourceName} \in V,\ ${sinkName} \in V$}
         \STATE $f = 0$
         \REPEAT
             \STATE $p = \left[\ \right]$
-            \STATE $u = \left[\ s\ \right]$ \COMMENT{create stack}
+            \STATE $u = \left[\ ${sourceName}\ \right]$ \COMMENT{create stack}
             \WHILE{$u_\mathrm{height}$ > 0}
                 \STATE $c =$ \CALL{pop}{$u$}
                 \FOR{edge $e$ originating from $c$}
-                    \IF{$e_\mathrm{target} \notin p$ \AND $e_\mathrm{target} \neq s$ \AND $e_\mathrm{capacity} > e_\mathrm{flow}$}
+                    \IF{$e_\mathrm{target} \notin p$ \AND $e_\mathrm{target} \neq ${sourceName}$ \AND $e_\mathrm{capacity} > e_\mathrm{flow}$}
                         \STATE $p[e_\mathrm{target}] = e$
                         \STATE \CALL{push}{$u$, $e_\mathrm{target}$}
                     \ENDIF
                 \ENDFOR
             \ENDWHILE
-            \IF{$p[t] \neq \varnothing$}
+            \IF{$p[${sinkName}] \neq \varnothing$}
                 \STATE $\Delta f = \infty$
                 \FOR{$e \in p$}
                     \STATE $\Delta f = $ \CALL{min}{$\Delta f$, $e_\mathrm{capacity} - e_\mathrm{flow}$}
@@ -42,7 +42,7 @@ export default {
                 \ENDFOR
                 \STATE $f = f + \Delta f$
             \ENDIF
-        \UNTIL{$p[t] = \varnothing$}
+        \UNTIL{$p[${sinkName}] = \varnothing$}
         \RETURN $f$
     \ENDPROCEDURE
     \end{algorithmic}
@@ -183,3 +183,5 @@ export default {
     return flow;
   }
 };
+
+export default FordFulkerson;

@@ -1,2 +1,2 @@
 // the (url-encoded) TGF string of the default graph
-export default "#A%20source%0AB%0AC%0AD%0AE%0AF%0AG%20sink%0AA%20B%203%0AA%20D%203%0AB%20C%204%0AC%20A%203%0AC%20D%201%0AC%20E%202%0AD%20E%202%0AD%20F%206%0AE%20B%201%0AE%20G%201%0AF%20G%209";
+export default "#s source%0Aa%0Ab%0Ac%0Ad%0Ae%0At sink%0As a 3%0As c 3%0Aa b 4%0Ab s 3%0Ab c 1%0Ab d 2%0Ac d 2%0Ac e 6%0Ad a 1%0Ad t 1%0Ae t 9";

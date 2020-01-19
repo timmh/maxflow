@@ -7,30 +7,30 @@ import {
   GraphNodeHighlightMutation,
   GraphEdgeHighlightMutation
 } from "../CytoscapeGraph";
+import { Algorithm } from "../algorithm";
 
 /** The Edmonds-Karp algorithm */
-
-export default {
+const EdmondsKarp: Algorithm = {
   name: "Edmonds-Karp",
   linearDataStructure: "queue",
-  pseudocode: String.raw`
+  pseudocode: ({ sourceName, sinkName }) => String.raw`
     \begin{algorithm}
     \begin{algorithmic}
-    \PROCEDURE{Edmonds-Karp}{$G=(V,\ E),\ s \in V,\ t \in V$}
+    \PROCEDURE{Edmonds-Karp}{$G=(V,\ E),\ ${sourceName} \in V,\ ${sinkName} \in V$}
         \STATE $f = 0$
         \REPEAT
             \STATE $p = \left[\ \right]$
-            \STATE $q = \left[\ s\ \right]$ \COMMENT{create queue}
+            \STATE $q = \left[\ ${sourceName}\ \right]$ \COMMENT{create queue}
             \WHILE{$q_\mathrm{length}$ > 0}
                 \STATE $c =$ \CALL{dequeue}{$q$}
                 \FOR{edge $e$ originating from $c$}
-                    \IF{$e_\mathrm{target} \notin p$ \AND $e_\mathrm{target} \neq s$ \AND $e_\mathrm{capacity} > e_\mathrm{flow}$}
+                    \IF{$e_\mathrm{target} \notin p$ \AND $e_\mathrm{target} \neq ${sourceName}$ \AND $e_\mathrm{capacity} > e_\mathrm{flow}$}
                         \STATE $p[e_\mathrm{target}] = e$
                         \STATE \CALL{enqueue}{$q$, $e_\mathrm{target}$}
                     \ENDIF
                 \ENDFOR
             \ENDWHILE
-            \IF{$p[t] \neq \varnothing$}
+            \IF{$p[${sinkName}] \neq \varnothing$}
                 \STATE $\Delta f = \infty$
                 \FOR{$e \in p$}
                     \STATE $\Delta f = $ \CALL{min}{$\Delta f$, $e_\mathrm{capacity} - e_\mathrm{flow}$}
@@ -42,7 +42,7 @@ export default {
                 \ENDFOR
                 \STATE $f = f + \Delta f$
             \ENDIF
-        \UNTIL{$p[t] = \varnothing$}
+        \UNTIL{$p[${sinkName}] = \varnothing$}
         \RETURN $f$
     \ENDPROCEDURE
     \end{algorithmic}
@@ -175,3 +175,5 @@ export default {
     return flow;
   }
 };
+
+export default EdmondsKarp;

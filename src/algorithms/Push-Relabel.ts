@@ -10,16 +10,16 @@ import {
   GraphNodeExcessMutation,
   GraphCombinedMutation
 } from "../CytoscapeGraph";
+import { Algorithm } from "../algorithm";
 
 /** The Push-Relabel algorithm */
-
-export default {
+const PushRelabel: Algorithm = {
   name: "Push-Relabel",
   linearDataStructure: "none",
-  pseudocode: String.raw`
+  pseudocode: ({ sourceName, sinkName }) => String.raw`
     \begin{algorithm}
     \begin{algorithmic}
-    \PROCEDURE{Push-Relabel}{$G=(V,\ E),\ s \in V,\ t \in V$}
+    \PROCEDURE{Push-Relabel}{$G=(V,\ E),\ ${sourceName} \in V,\ ${sinkName} \in V$}
         \FOR{vertex $v$}
           \STATE $v.h = 0$
           \STATE $v.e = 0$
@@ -27,10 +27,10 @@ export default {
 
         \STATE $s.h = \left|V\right|$
 
-        \FOR{vertex $v$ adjacent to $s$}
-          \STATE $(s, v).f = (s, v).c$
-          \STATE $v.e = (s, v).c$
-          \STATE $s.e = s.e - (s, v).c$
+        \FOR{vertex $v$ adjacent to $${sourceName}$}
+          \STATE $(${sourceName}, v).f = (${sourceName}, v).c$
+          \STATE $v.e = (${sourceName}, v).c$
+          \STATE $${sourceName}.e = ${sourceName}.e - (${sourceName}, v).c$
         \ENDFOR
 
         \WHILE{there exists an applicable push or relabel operation}
@@ -208,3 +208,5 @@ const relabel = (u: Node) =>
     ),
     new GraphNodeHighlightMutation(u)
   ]);
+
+export default PushRelabel;

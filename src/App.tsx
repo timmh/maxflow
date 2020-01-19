@@ -10,36 +10,18 @@ import { tgf2cyto, cyto2tgf } from "./utils/io";
 import assertValidGraph from "./utils/assertValidGraph";
 import GraphControls, { GraphDisplayState } from "./GraphControls";
 import FileSaver from "file-saver";
-import { Graph, GraphMutation, Node } from "./CytoscapeGraph";
+import { Graph } from "./CytoscapeGraph";
 import GraphVisualization from "./GraphVisualization";
 import * as styleVariables from "./variables.scss";
 import useQueue from "./utils/useQueue";
 import algorithms from "./algorithms";
 import Footer from "./Footer";
 import Joyride from "react-joyride";
-
-/**
- * The interface each algorithm (from the algorithms directory) has
- * to implement
- */
-export interface Algorithm {
-  name: string;
-  pseudocode: string;
-  labeledBlocks: { lines: [number, number]; color: string; label: string }[];
-  implementation: (graph: Graph) => Generator<AlgorithmStepResult, void, []>;
-  linearDataStructure: "queue" | "stack" | "none";
-}
-
-/**
- * Each call to the algorithm instance's `next()` method yields an
- * object confoming to this interface
- */
-interface AlgorithmStepResult {
-  highlightedLines?: number[];
-  linearNodes: Node[];
-  graphMutations?: GraphMutation[];
-  done?: true;
-}
+import {
+  Algorithm,
+  AlgorithmStepResult,
+  AlgorithmPseudocodeArgs
+} from "./algorithm";
 
 // the "empty" step result, shown before the algorithm is run
 const initialStepResult = {
@@ -80,7 +62,7 @@ const App: React.FC = () => {
   const [
     algorithmImplementationInstance,
     setAlgorithmImplementationInstance
-  ] = useState<Generator<AlgorithmStepResult> | null>(null);
+  ] = useState<IterableIterator<AlgorithmStepResult> | null>(null);
   const resetAlgorithm = () => {
     if (algorithm && visRef && visRef.cy) {
       setAlgorithmImplementationInstance(
@@ -111,6 +93,9 @@ const App: React.FC = () => {
   >([initialStepResult]);
   const [stepBackwardBufferIndex, setStepBackwardBufferIndex] = useState(0);
   const { linearNodes } = stepBackwardBuffer[stepBackwardBufferIndex];
+  const [algorithmPseudocodeArgs, setAlgorithmPseudocodeArgs] = useState<
+    AlgorithmPseudocodeArgs
+  >({ sourceName: "s", sinkName: "t" });
 
   const [showTour, setShowTour] = useState(false);
 
@@ -199,6 +184,22 @@ const App: React.FC = () => {
     [algorithmImplementationInstance, algorithmState, setAlgorithmState]
   );
 
+  const handleVisChange = useCallback(() => {
+    if (!visRef || !visRef.cy) return;
+
+    setAlgorithmPseudocodeArgs({
+      sourceName:
+        visRef?.cy?.nodes('.graph-node[type="source"]')[0]?.data("label") ??
+        "s",
+      sinkName:
+        visRef?.cy?.nodes('.graph-node[type="sink"]')[0]?.data("label") ?? "t"
+    });
+  }, [visRef]);
+
+  useEffect(() => {
+    handleVisChange();
+  }, [handleVisChange]);
+
   const onDrop = useCallback(
     (acceptedFiles: Blob[]) => {
       if (acceptedFiles.length !== 1) {
@@ -283,6 +284,7 @@ const App: React.FC = () => {
           visualizationRef={nextVisualizationRef => {
             setVisRef(nextVisualizationRef);
           }}
+          onChange={() => handleVisChange()}
           disableInteraction={algorithmState !== "stopped"}
           autoLayout={autoLayout}
           graphDisplayState={graphDisplayState}
@@ -306,7 +308,11 @@ const App: React.FC = () => {
             setPreferences({ ...preferences, algorithmName });
           }}
         />
-        <Pseudocode algorithm={algorithm} highlightedLines={highlightedLines} />
+        <Pseudocode
+          algorithm={algorithm}
+          highlightedLines={highlightedLines}
+          algorithmPseudocodeArgs={algorithmPseudocodeArgs}
+        />
         {algorithm.linearDataStructure !== "none" ? (
           <NodeQueueStackVisualization
             nodes={linearNodes}
