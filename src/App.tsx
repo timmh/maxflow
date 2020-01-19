@@ -16,6 +16,7 @@ import * as styleVariables from "./variables.scss";
 import useQueue from "./utils/useQueue";
 import algorithms from "./algorithms";
 import Footer from "./Footer";
+import Joyride from "react-joyride";
 
 /**
  * The interface each algorithm (from the algorithms directory) has
@@ -110,6 +111,8 @@ const App: React.FC = () => {
   >([initialStepResult]);
   const [stepBackwardBufferIndex, setStepBackwardBufferIndex] = useState(0);
   const { linearNodes } = stepBackwardBuffer[stepBackwardBufferIndex];
+
+  const [showTour, setShowTour] = useState(false);
 
   const stepForward = () => {
     if (!algorithmImplementationInstance || !visRef) return;
@@ -312,10 +315,67 @@ const App: React.FC = () => {
         ) : (
           <div className="horizontal-divider" />
         )}
-        <Footer />
+        <Footer
+          onTourPressed={() => {
+            setShowTour(true);
+          }}
+        />
       </div>
+      <Joyride
+        continuous
+        run={showTour}
+        scrollToFirstStep
+        showProgress
+        showSkipButton
+        steps={tourSteps}
+      />
     </div>
   );
 };
+
+const tourSteps = [
+  {
+    target: ".graph-visualization__overlay",
+    content: `
+      This is the flow network view.
+      Click/tap and hold to modify nodes and edges.
+      When hovering a node, drag the red handle to create new edges.
+    `
+  },
+  {
+    target: ".controls__select",
+    content: `
+      Select an algorithm you wish to visualize
+    `
+  },
+  {
+    target: ".controls__buttons",
+    content: `
+      Use these buttons to step forwards or backwards,
+      run to completion or reset the algorithm
+    `
+  },
+  {
+    target: ".pseudocode",
+    content: `
+      This is the pseudocode of your algorithm
+    `
+  },
+  {
+    target: ".node-queue-stack-visualization",
+    content: `
+      Depending on the selected algorithm, secondary data structures
+      are visualized here
+    `
+  },
+  {
+    target: ".graph-controls",
+    content: `
+      Use these controls to disable automatic flow network layouting,
+      import and export your flow network and switch between
+      different flow network presentation options
+    `
+  }
+].map(step => ({ disableBeacon: true, ...step }));
 
 export default App;

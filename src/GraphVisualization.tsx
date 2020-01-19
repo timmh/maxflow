@@ -538,6 +538,7 @@ class GraphVisualization extends React.Component<
   render = () => {
     return (
       <div className="graph-visualization">
+        <div className="graph-visualization__overlay" />
         <div
           className="graph-visualization__cytoscape"
           ref={ref => {

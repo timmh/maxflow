@@ -23,6 +23,7 @@ button {
   display: flex;
   align-items: stretch;
   height: 100vh;
+  background-color: $color-white;
 
   &__left {
     min-width: 325px;
@@ -63,6 +64,15 @@ button {
   position: relative;
   overflow: hidden;
   box-shadow: -5px 5px 15px -10px $color-black inset;
+
+  &__overlay {
+    position: absolute;
+    $margin: 20px;
+    left: $margin;
+    right: $margin;
+    top: $margin;
+    bottom: $margin;
+  }
 
   &__cytoscape {
     position: absolute;
@@ -163,6 +173,7 @@ button {
   flex-shrink: 1;
   overflow-x: hidden;
   overflow-y: auto;
+  z-index: 1;
 
   .ps-root .ps-algorithm {
     border: none;
@@ -215,7 +226,9 @@ button {
   white-space: pre;
   padding: 10px;
 
-  a {
+  a,
+  [role="button"] {
+    cursor: pointer;
     color: $color-black;
     text-decoration: none;
     transition: opacity 200ms ease;
