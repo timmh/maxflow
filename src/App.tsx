@@ -16,7 +16,9 @@ import * as styleVariables from "./variables.scss";
 import useQueue from "./utils/useQueue";
 import algorithms from "./algorithms";
 import Footer from "./Footer";
-import Joyride from "react-joyride";
+import * as Joyride from "react-joyride";
+import JoyrideComponent from "react-joyride";
+
 import {
   Algorithm,
   AlgorithmStepResult,
@@ -200,6 +202,15 @@ const App: React.FC = () => {
     handleVisChange();
   }, [handleVisChange]);
 
+  const handleTourCallback = useCallback((data: Joyride.CallBackProps) => {
+    if (
+      data.status === Joyride.STATUS.FINISHED ||
+      data.status === Joyride.STATUS.SKIPPED
+    ) {
+      setShowTour(false);
+    }
+  }, []);
+
   const onDrop = useCallback(
     (acceptedFiles: Blob[]) => {
       if (acceptedFiles.length !== 1) {
@@ -327,9 +338,10 @@ const App: React.FC = () => {
           }}
         />
       </div>
-      <Joyride
+      <JoyrideComponent
         continuous
         run={showTour}
+        callback={handleTourCallback}
         scrollToFirstStep
         showProgress
         showSkipButton
