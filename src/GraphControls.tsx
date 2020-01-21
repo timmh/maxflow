@@ -54,9 +54,7 @@ const GraphControls = ({
           { value: "original_flow", label: "Original" }
         ]}
         activeChoice={graphDisplayState}
-        onChoose={(graphDisplayState: string) =>
-          setGraphDisplayState(graphDisplayState as GraphDisplayState)
-        }
+        onChoose={graphDisplayState => setGraphDisplayState(graphDisplayState)}
       />
     </div>
   );

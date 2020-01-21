@@ -21,13 +21,27 @@ button {
 
 .app {
   display: flex;
-  align-items: stretch;
+  flex-direction: column;
   height: 100vh;
+  min-width: 320px;
   background-color: $color-white;
+  align-items: stretch;
+
+  &__content-wrapper {
+    flex: 1;
+    position: relative;
+  }
+
+  &__content {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
 
   &__left {
-    min-width: 325px;
-    flex: 2;
+    flex: 3;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -35,13 +49,30 @@ button {
   }
 
   &__right {
-    min-width: 475px;
     max-width: 600px;
-    flex: 1;
+    flex: 2;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
+  }
+
+  &__left,
+  &__right {
+    &--hidden {
+      display: none;
+    }
+  }
+}
+
+.view-switch {
+  .switch {
+    width: 100%;
+    display: flex;
+
+    &__button {
+      flex: 1;
+    }
   }
 }
 

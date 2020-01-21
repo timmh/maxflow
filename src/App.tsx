@@ -18,12 +18,15 @@ import algorithms from "./algorithms";
 import Footer from "./Footer";
 import * as Joyride from "react-joyride";
 import JoyrideComponent from "react-joyride";
+import { useMediaQuery } from "react-responsive";
+import classNames from "classnames";
 
 import {
   Algorithm,
   AlgorithmStepResult,
   AlgorithmPseudocodeArgs
 } from "./algorithm";
+import Switch from "./Switch";
 
 // the "empty" step result, shown before the algorithm is run
 const initialStepResult = {
@@ -100,6 +103,11 @@ const App: React.FC = () => {
   >({ sourceName: "s", sinkName: "t" });
 
   const [showTour, setShowTour] = useState(false);
+
+  const isBigScreen = useMediaQuery({
+    query: "(min-width: 1000px)"
+  });
+  const [activeView, setActiveView] = useState<"graph" | "algorithm">("graph");
 
   const stepForward = () => {
     if (!algorithmImplementationInstance || !visRef) return;
@@ -259,84 +267,111 @@ const App: React.FC = () => {
   return (
     <div className="app" {...getRootProps()}>
       <input {...getInputProps()} />
-      <div className="app__left">
-        <GraphControls
-          autoLayout={autoLayout}
-          setAutoLayout={autoLayout => {
-            setAutoLayout(autoLayout);
-            setPreferences({ ...preferences, autoLayout });
-          }}
-          onImport={() => openDropzone()}
-          onExport={() =>
-            visRef &&
-            FileSaver.saveAs(
-              new Blob([cyto2tgf(visRef.cy!)], {
-                type: "text/plain;charset=utf-8"
-              }),
-              "graph.tgf",
-              { autoBom: true }
-            )
-          }
-          onExportPng={() => {
-            if (!visRef) return;
-            visRef.edgehandles.hide();
-            FileSaver.saveAs(
-              visRef.cy!.png({ output: "blob", full: true, scale: 10 }),
-              "graph.png"
-            );
-          }}
-          graphDisplayState={graphDisplayState}
-          setGraphDisplayState={(graphDisplayState: GraphDisplayState) => {
-            setGraphDisplayState(graphDisplayState);
-            setPreferences({ ...preferences, graphDisplayState });
-          }}
-        />
-        <GraphVisualization
-          visualizationRef={nextVisualizationRef => {
-            setVisRef(nextVisualizationRef);
-          }}
-          onChange={() => handleVisChange()}
-          disableInteraction={algorithmState !== "stopped"}
-          autoLayout={autoLayout}
-          graphDisplayState={graphDisplayState}
-        />
-      </div>
-      <div className="app__right">
-        <div className="header" />
-        <Controls
-          state={algorithmState}
-          setState={setAlgorithmState}
-          stepBackward={stepBackwardBufferIndex > -1 ? stepBackward : undefined}
-          stepForward={algorithmState !== "finished" ? stepForward : undefined}
-          reset={reset}
-          algorithms={algorithms.map(({ label, filename }) => ({
-            label,
-            value: filename
-          }))}
-          currentAlgorithm={algorithmName}
-          setCurrentAlgorithm={algorithmName => {
-            setAlgorithmName(algorithmName);
-            setPreferences({ ...preferences, algorithmName });
-          }}
-        />
-        <Pseudocode
-          algorithm={algorithm}
-          highlightedLines={highlightedLines}
-          algorithmPseudocodeArgs={algorithmPseudocodeArgs}
-        />
-        {algorithm.linearDataStructure !== "none" ? (
-          <NodeQueueStackVisualization
-            nodes={linearNodes}
-            mode={algorithm.linearDataStructure}
+      {!isBigScreen && (
+        <div className="view-switch">
+          <Switch
+            onChoose={activeView => setActiveView(activeView)}
+            choices={[
+              { value: "graph", label: "Network" },
+              { value: "algorithm", label: "Algorithm" }
+            ]}
           />
-        ) : (
-          <div className="horizontal-divider" />
-        )}
-        <Footer
-          onTourPressed={() => {
-            setShowTour(true);
-          }}
-        />
+        </div>
+      )}
+      <div className="app__content-wrapper">
+        <div className="app__content">
+          <div
+            className={classNames("app__left", {
+              "app__left--hidden": !isBigScreen && activeView !== "graph"
+            })}
+          >
+            <GraphControls
+              autoLayout={autoLayout}
+              setAutoLayout={autoLayout => {
+                setAutoLayout(autoLayout);
+                setPreferences({ ...preferences, autoLayout });
+              }}
+              onImport={() => openDropzone()}
+              onExport={() =>
+                visRef &&
+                FileSaver.saveAs(
+                  new Blob([cyto2tgf(visRef.cy!)], {
+                    type: "text/plain;charset=utf-8"
+                  }),
+                  "graph.tgf",
+                  { autoBom: true }
+                )
+              }
+              onExportPng={() => {
+                if (!visRef) return;
+                visRef.edgehandles.hide();
+                FileSaver.saveAs(
+                  visRef.cy!.png({ output: "blob", full: true, scale: 10 }),
+                  "graph.png"
+                );
+              }}
+              graphDisplayState={graphDisplayState}
+              setGraphDisplayState={(graphDisplayState: GraphDisplayState) => {
+                setGraphDisplayState(graphDisplayState);
+                setPreferences({ ...preferences, graphDisplayState });
+              }}
+            />
+            <GraphVisualization
+              visualizationRef={nextVisualizationRef => {
+                setVisRef(nextVisualizationRef);
+              }}
+              onChange={() => handleVisChange()}
+              disableInteraction={algorithmState !== "stopped"}
+              autoLayout={autoLayout}
+              graphDisplayState={graphDisplayState}
+            />
+          </div>
+          <div
+            className={classNames("app__right", {
+              "app__right--hidden": !isBigScreen && activeView !== "algorithm"
+            })}
+          >
+            <div className="header" />
+            <Controls
+              state={algorithmState}
+              setState={setAlgorithmState}
+              stepBackward={
+                stepBackwardBufferIndex > -1 ? stepBackward : undefined
+              }
+              stepForward={
+                algorithmState !== "finished" ? stepForward : undefined
+              }
+              reset={reset}
+              algorithms={algorithms.map(({ label, filename }) => ({
+                label,
+                value: filename
+              }))}
+              currentAlgorithm={algorithmName}
+              setCurrentAlgorithm={algorithmName => {
+                setAlgorithmName(algorithmName);
+                setPreferences({ ...preferences, algorithmName });
+              }}
+            />
+            <Pseudocode
+              algorithm={algorithm}
+              highlightedLines={highlightedLines}
+              algorithmPseudocodeArgs={algorithmPseudocodeArgs}
+            />
+            {algorithm.linearDataStructure !== "none" ? (
+              <NodeQueueStackVisualization
+                nodes={linearNodes}
+                mode={algorithm.linearDataStructure}
+              />
+            ) : (
+              <div className="horizontal-divider" />
+            )}
+            <Footer
+              onTourPressed={() => {
+                setShowTour(true);
+              }}
+            />
+          </div>
+        </div>
       </div>
       <JoyrideComponent
         continuous
