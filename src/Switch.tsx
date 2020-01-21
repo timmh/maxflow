@@ -21,7 +21,7 @@ function Switch<T extends number | string>({
   onChoose
 }: {
   choices: Choice<T>[];
-  activeChoice?: string;
+  activeChoice?: T;
   onChoose: (value: T) => void;
 }) {
   return (

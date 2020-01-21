@@ -271,6 +271,7 @@ const App: React.FC = () => {
         <div className="view-switch">
           <Switch
             onChoose={activeView => setActiveView(activeView)}
+            activeChoice={activeView}
             choices={[
               { value: "graph", label: "Network" },
               { value: "algorithm", label: "Algorithm" }
