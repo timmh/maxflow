@@ -266,7 +266,11 @@ class GraphVisualization extends React.Component<
             typeof data.height === "number" || typeof data.excess === "number";
 
           return `
-          <div style="font-family: KaTeX_Math; text-align: center; line-height: 12px;">
+          <div style="
+            font-family: KaTeX_Math;
+            text-align: center;
+            line-height: 12px;
+          " class="cytoscape-html-node-label-${data.id}">
           <div style="font-size: ${hasMetadata ? 12 : 16}px;">${
             data.label
           }</div>
@@ -301,6 +305,18 @@ class GraphVisualization extends React.Component<
       } else {
         window.location.hash = exp;
       }
+    });
+
+    // TODO: find out why this is necessary and remove
+    this.cy!.on("remove", ".graph-node", evt => {
+      const id = evt.target.id();
+      setTimeout(() => {
+        Array.from(
+          document.querySelectorAll(`.cytoscape-html-node-label-${id}`)
+        ).forEach(el => {
+          el.remove();
+        });
+      }, 100);
     });
 
     this.cy!.on("restyle", () => {
