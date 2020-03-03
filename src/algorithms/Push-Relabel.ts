@@ -54,6 +54,18 @@ const PushRelabel: Algorithm = {
     \end{algorithmic}
     \end{algorithm}
   `,
+  references: [
+    {
+      label: `Push-Relabel Algorithm at geeksforgeeks.org`,
+      url:
+        "https://www.geeksforgeeks.org/push-relabel-algorithm-set-1-introduction-and-illustration/"
+    },
+    {
+      label: `Cormen, Leiserson, Rivest, Stein: Introduction to Algorithms (third edition, 2009)`,
+      url:
+        "https://openlibrary.org/books/OL25409352M/Introduction_to_Algorithms"
+    }
+  ],
   labeledBlocks: [],
   implementation: function*(
     graph: Graph

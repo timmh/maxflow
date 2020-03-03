@@ -27,6 +27,7 @@ import {
   AlgorithmPseudocodeArgs
 } from "./algorithm";
 import Switch from "./Switch";
+import References from "./References";
 
 // the "empty" step result, shown before the algorithm is run
 const initialStepResult = {
@@ -366,6 +367,7 @@ const App: React.FC = () => {
             ) : (
               <div className="horizontal-divider" />
             )}
+            <References references={algorithm.references} />
             <Footer
               onTourPressed={() => {
                 setShowTour(true);

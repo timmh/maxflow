@@ -48,6 +48,17 @@ const EdmondsKarp: Algorithm = {
     \end{algorithmic}
     \end{algorithm}
   `,
+  references: [
+    {
+      label: `Edmonds-Karp Algorithm at Brilliant.org`,
+      url: "https://brilliant.org/wiki/edmonds-karp-algorithm/"
+    },
+    {
+      label: `Jack Edmonds, Richard M. Karp: Theoretical improvements in algorithmic efficiency for network flow problems (1972)`,
+      url:
+        "https://web.eecs.umich.edu/~pettie/matching/Edmonds-Karp-network-flow.pdf"
+    }
+  ],
   labeledBlocks: [
     { lines: [4, 14], color: "#ffdcdc", label: "Breadth-first search" },
     {

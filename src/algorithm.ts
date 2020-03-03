@@ -7,6 +7,7 @@ import { Graph, GraphMutation, Node } from "./CytoscapeGraph";
 export interface Algorithm {
   name: string;
   pseudocode: (args: AlgorithmPseudocodeArgs) => string;
+  references: { label: string, url: string }[];
   labeledBlocks: { lines: [number, number]; color: string; label: string }[];
   implementation: (graph: Graph) => IterableIterator<AlgorithmStepResult>;
   linearDataStructure: "queue" | "stack" | "none";

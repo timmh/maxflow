@@ -256,17 +256,36 @@ button {
   align-items: flex-end;
   white-space: pre;
   padding: 10px;
+}
 
-  a,
-  [role="button"] {
-    cursor: pointer;
-    color: $color-black;
-    text-decoration: none;
-    transition: opacity 200ms ease;
+a,
+[role="button"] {
+  cursor: pointer;
+  color: $color-black;
+  text-decoration: none;
+  transition: opacity 200ms ease;
 
-    &:hover {
-      opacity: 0.75;
-      text-decoration: underline;
-    }
+  &:hover {
+    opacity: 0.75;
+    text-decoration: underline;
   }
+}
+
+.references {
+  padding: 1em 2em;
+
+  &__list {
+    margin: 0;
+    padding: 0;
+    font-family: KaTeX_Main;
+    list-style-type: square;
+  }
+}
+
+h1 {
+  font-size: 1em;
+}
+
+h2 {
+  font-size: 1em;
 }
