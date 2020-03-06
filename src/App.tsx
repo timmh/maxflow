@@ -20,6 +20,7 @@ import * as Joyride from "react-joyride";
 import JoyrideComponent from "react-joyride";
 import { useMediaQuery } from "react-responsive";
 import classNames from "classnames";
+import domtoimage from "dom-to-image";
 
 import {
   Algorithm,
@@ -305,12 +306,20 @@ const App: React.FC = () => {
                 )
               }
               onExportPng={() => {
-                if (!visRef) return;
-                visRef.edgehandles.hide();
-                FileSaver.saveAs(
-                  visRef.cy!.png({ output: "blob", full: true, scale: 10 }),
-                  "graph.png"
-                );
+                (async () => {
+                  try {
+                    if (!visRef) return;
+                    const el = document.querySelector(
+                      ".graph-visualization__cytoscape"
+                    );
+                    if (!el) throw new Error("Unable to export node labels");
+                    visRef.edgehandles.hide();
+                    const nodeLabelBlob = await domtoimage.toBlob(el);
+                    FileSaver.saveAs(nodeLabelBlob, "graph.png");
+                  } catch (err) {
+                    Swal.fire("Error", "The image export failed", "error");
+                  }
+                })();
               }}
               graphDisplayState={graphDisplayState}
               setGraphDisplayState={(graphDisplayState: GraphDisplayState) => {
