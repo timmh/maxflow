@@ -11,7 +11,12 @@ import cxtmenu from "cytoscape-cxtmenu";
 import Swal from "sweetalert2";
 import defaultHash from "./utils/defaultHash";
 import * as styleVariables from "./variables.scss";
-import { cyto2tgf, tgf2cyto } from "./utils/io";
+import {
+  cyto2tgf,
+  tgf2cyto,
+  urlSafeBase64Encode,
+  urlSafeBase64Decode
+} from "./utils/io";
 import { GraphDisplayState } from "./GraphControls";
 import nodeHtmlLabel from "cytoscape-node-html-label";
 
@@ -20,13 +25,12 @@ cytoscape.use(edgehandles);
 cytoscape.use(cxtmenu);
 nodeHtmlLabel(cytoscape);
 
-const graphToHash = (cy: cytoscape.Core) => {
-  return `#${encodeURIComponent(cyto2tgf(cy))}`;
-};
+const graphToHash = (cy: cytoscape.Core) =>
+  `#${encodeURIComponent(urlSafeBase64Encode(cyto2tgf(cy)))}`;
 
 const hashToGraph = (hash: string) => {
   if (!hash.startsWith("#")) throw new Error("invalid hash");
-  return tgf2cyto(decodeURIComponent(hash.substr(1)));
+  return tgf2cyto(urlSafeBase64Decode(decodeURIComponent(hash.substr(1))));
 };
 
 const getNewNodeLabel = () =>
@@ -245,9 +249,23 @@ class GraphVisualization extends React.Component<
       this.cy.destroy();
     }
     this.container.innerHTML = "";
+
+    let elementsFromUrl = hashToGraph(defaultHash);
+    if (window.location.hash) {
+      try {
+        elementsFromUrl = hashToGraph(window.location.hash);
+      } catch (err) {
+        Swal.fire(
+          "Error",
+          "Unable to read graph from URL. The default graph was loaded.",
+          "error"
+        );
+      }
+    }
+
     // @ts-ignore
     this.cy = cytoscape({
-      elements: hashToGraph(window.location.hash || defaultHash),
+      elements: elementsFromUrl,
       container: this.container,
       boxSelectionEnabled: false,
       minZoom: 0.5,
@@ -521,11 +539,10 @@ class GraphVisualization extends React.Component<
     ) {
       if (this.state.interactionDisabled) {
         this.disableMenus();
-        // @ts-ignore
+        this.edgehandles.hide();
         this.edgehandles.disable();
       } else {
         this.enableMenus();
-        // @ts-ignore
         this.edgehandles.enable();
       }
       this.restyle();

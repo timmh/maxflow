@@ -55,6 +55,16 @@ const tgf2cyto: (tgf: String) => cytoscape.ElementDefinition[] = (
     }));
 
   edges.forEach((edge: any) => {
+    if (nodes.filter(node => node.data.id === edge.data.source).length !== 1) {
+      throw new Error(
+        `Invalid graph: there is no single node with id ${edge.data.source}`
+      );
+    }
+    if (nodes.filter(node => node.data.id === edge.data.target).length !== 1) {
+      throw new Error(
+        `Invalid graph: there is no single node with id ${edge.data.target}`
+      );
+    }
     if (
       edges.filter(
         (otherEdge: any) =>
@@ -117,4 +127,18 @@ const cyto2tgf = (cy: cytoscape.Core) => {
   return [nodes, edges].join("\n");
 };
 
-export { tgf2cyto, cyto2tgf };
+const urlSafeBase64Encode = (str: string) =>
+  btoa(str)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+
+const urlSafeBase64Decode = (str: string) =>
+  atob(
+    (str + "===")
+      .slice(0, str.length + (str.length % 4))
+      .replace(/-/g, "+")
+      .replace(/_/g, "/")
+  );
+
+export { tgf2cyto, cyto2tgf, urlSafeBase64Encode, urlSafeBase64Decode };
