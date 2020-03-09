@@ -2,21 +2,23 @@
 
 button {
   border-radius: 0;
-  background-color: #eeeeee;
+  background-color: $color-grey;
   border: none;
   padding: 5px 10px;
+  transition: 200ms ease all;
+  font-size: 0.75em;
 
   &:not(:disabled) {
     cursor: pointer;
   }
 
   &:hover:not(:disabled) {
-    background-color: #dddddd;
+    background-color: darken($color: $color-grey, $amount: 10%);
   }
 }
 
 .switch {
-  display: inline-block;
+  display: flex;
 }
 
 .app {
@@ -55,6 +57,15 @@ button {
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
+
+    &__contents {
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    &__header {
+      flex: 1;
+    }
   }
 
   &__left,
@@ -66,27 +77,27 @@ button {
 }
 
 .view-switch {
-  .switch {
-    width: 100%;
-    display: flex;
-
-    &__button {
-      flex: 1;
-    }
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
 }
 
 .graph-controls {
   min-height: 50px;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
+  padding: 0 10px;
 
   label {
     user-select: none;
     display: flex;
-    justify-content: center;
     align-items: center;
+  }
+
+  > *:not(:last-child) {
+    margin-right: 10px;
   }
 }
 
@@ -202,9 +213,8 @@ button {
 .pseudocode {
   position: relative;
   flex-shrink: 1;
-  overflow-x: hidden;
-  overflow-y: auto;
   z-index: 1;
+  min-height: 200px;
 
   .ps-root .ps-algorithm {
     border: none;
@@ -246,7 +256,16 @@ button {
 }
 
 .header {
-  flex: 1;
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+
+  &__icon {
+    width: 50px;
+    @media (min-width: $min-width-big-screen) {
+      width: 75px;
+    }
+  }
 }
 
 .footer {
@@ -256,6 +275,7 @@ button {
   align-items: flex-end;
   white-space: pre;
   padding: 10px;
+  border-top: 2px solid #000000;
 }
 
 a,
@@ -282,10 +302,47 @@ a,
   }
 }
 
-h1 {
-  font-size: 1em;
+h1,
+h2 {
+  font-size: 0.75em;
+
+  @media (min-width: $min-width-big-screen) {
+    font-size: 1em;
+  }
 }
 
-h2 {
-  font-size: 1em;
+.dropdown {
+  position: relative;
+
+  &__button {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 10px;
+  }
+
+  &__content {
+    position: absolute;
+    background-color: $color-grey;
+    z-index: 1;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    padding: 5px 10px;
+  }
+
+  &--size-s,
+  &--size-s &__content {
+    width: 100px;
+  }
+
+  &--size-m,
+  &--size-m &__content {
+    width: 125px;
+  }
+
+  &--size-l,
+  &--size-l &__content {
+    width: 150px;
+  }
 }

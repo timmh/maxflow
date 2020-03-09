@@ -16,7 +16,7 @@ const References = ({
       <h2>Sources & Further Reading</h2>
       <ul className="references__list">
         {references.map(({ label, url }) => (
-          <li className="references__item">
+          <li key={`${label}-${url}`} className="references__item">
             <a href={url}>{label}</a>
           </li>
         ))}

@@ -1,19 +1,23 @@
 $color-black: #000000;
 $color-white: #ffffff;
+$color-grey: #eeeeee;
 $color-highlight: #ffd700;
 $color-handles: #ff0000;
 $highlighted-lines-count: 2;
 $node-size: 50;
 $auto-step-interval: 1000;
 $step-transition-duration: 500;
+$min-width-big-screen: 1000px;
 
 :export {
   colorBlack: $color-black;
   colorWhite: $color-white;
+  colorGrey: $color-grey;
   colorHighlight: $color-highlight;
   colorHandles: $color-handles;
   highlightedLinesCount: $highlighted-lines-count;
   nodeSize: $node-size;
   autoStepInterval: $auto-step-interval;
   stepTransitionDuration: $step-transition-duration;
+  minWidthBigScreen: $min-width-big-screen;
 }

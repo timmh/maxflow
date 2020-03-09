@@ -1,5 +1,10 @@
 import React from "react";
 import Switch from "./Switch";
+import Header from "./Header";
+import { useMediaQuery } from "react-responsive";
+import * as styleVariables from "./variables.scss";
+import Dropdown from "./Dropdown";
+import Checkbox from "./Checkbox";
 
 export type GraphDisplayState = "flow" | "residual" | "original_flow";
 
@@ -32,21 +37,26 @@ const GraphControls = ({
   graphDisplayState: GraphDisplayState;
   setGraphDisplayState: (graphDisplayState: GraphDisplayState) => void;
 }) => {
+  const isBigScreen = useMediaQuery({
+    query: `(min-width: ${styleVariables.minWidthBigScreen})`
+  });
+
   return (
     <div className="graph-controls">
-      <label>
-        <input
-          type="checkbox"
+      {isBigScreen && <Header />}
+      <Dropdown title="Layout" size="m">
+        <Checkbox
           checked={autoLayout}
-          onChange={evt => setAutoLayout(evt.target.checked)}
-        />
-        Autolayout
-      </label>
-      <div>
+          onChange={checked => setAutoLayout(checked)}
+        >
+          Automatic Layout
+        </Checkbox>
+      </Dropdown>
+      <Dropdown title="I/O" size="s">
         <button onClick={() => onImport()}>Import</button>
         <button onClick={() => onExport()}>Export</button>
         <button onClick={() => onExportPng()}>Export PNG</button>
-      </div>
+      </Dropdown>
       <Switch
         choices={[
           { value: "flow", label: "Flow" },

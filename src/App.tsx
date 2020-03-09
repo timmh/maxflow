@@ -21,14 +21,14 @@ import JoyrideComponent from "react-joyride";
 import { useMediaQuery } from "react-responsive";
 import classNames from "classnames";
 import domtoimage from "dom-to-image";
-
+import Switch from "./Switch";
+import References from "./References";
+import Header from "./Header";
 import {
   Algorithm,
   AlgorithmStepResult,
   AlgorithmPseudocodeArgs
 } from "./algorithm";
-import Switch from "./Switch";
-import References from "./References";
 
 // the "empty" step result, shown before the algorithm is run
 const initialStepResult = {
@@ -107,7 +107,7 @@ const App: React.FC = () => {
   const [showTour, setShowTour] = useState(false);
 
   const isBigScreen = useMediaQuery({
-    query: "(min-width: 1000px)"
+    query: `(min-width: ${styleVariables.minWidthBigScreen})`
   });
   const [activeView, setActiveView] = useState<"graph" | "algorithm">("graph");
 
@@ -181,14 +181,7 @@ const App: React.FC = () => {
 
   useInterval(
     () => {
-      if (algorithmState === "auto" && visRef) {
-        try {
-          assertValidGraph(visRef.cy!);
-        } catch (err) {
-          Swal.fire("Error", err.toString(), "error");
-          reset();
-          return;
-        }
+      if (algorithmState === "auto") {
         stepForward();
       }
     },
@@ -271,6 +264,7 @@ const App: React.FC = () => {
       <input {...getInputProps()} />
       {!isBigScreen && (
         <div className="view-switch">
+          <Header />
           <Switch
             onChoose={activeView => setActiveView(activeView)}
             activeChoice={activeView}
@@ -342,7 +336,7 @@ const App: React.FC = () => {
               "app__right--hidden": !isBigScreen && activeView !== "algorithm"
             })}
           >
-            <div className="header" />
+            <div className="app__right__header" />
             <Controls
               state={algorithmState}
               setState={setAlgorithmState}
@@ -363,20 +357,22 @@ const App: React.FC = () => {
                 setPreferences({ ...preferences, algorithmName });
               }}
             />
-            <Pseudocode
-              algorithm={algorithm}
-              highlightedLines={highlightedLines}
-              algorithmPseudocodeArgs={algorithmPseudocodeArgs}
-            />
-            {algorithm.linearDataStructure !== "none" ? (
-              <NodeQueueStackVisualization
-                nodes={linearNodes}
-                mode={algorithm.linearDataStructure}
+            <div className="app__right__contents">
+              <Pseudocode
+                algorithm={algorithm}
+                highlightedLines={highlightedLines}
+                algorithmPseudocodeArgs={algorithmPseudocodeArgs}
               />
-            ) : (
-              <div className="horizontal-divider" />
-            )}
-            <References references={algorithm.references} />
+              {algorithm.linearDataStructure !== "none" ? (
+                <NodeQueueStackVisualization
+                  nodes={linearNodes}
+                  mode={algorithm.linearDataStructure}
+                />
+              ) : (
+                <div className="horizontal-divider" />
+              )}
+              <References references={algorithm.references} />
+            </div>
             <Footer
               onTourPressed={() => {
                 setShowTour(true);
