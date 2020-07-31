@@ -54,7 +54,7 @@ interface GraphVisualizationState {
 class GraphVisualization extends React.Component<
   GraphVisualizationProps,
   GraphVisualizationState
-> {
+  > {
   container: HTMLDivElement | null = null;
   cy: cytoscape.Core | null = null;
   layout: cytoscape.Layouts | null = null;
@@ -152,8 +152,8 @@ class GraphVisualization extends React.Component<
           node.data().type === "source"
             ? "double"
             : node.data().type === "sink"
-            ? "dashed"
-            : "solid",
+              ? "dashed"
+              : "solid",
         "background-color": "white",
         "transition-property": "border-color",
         "transition-duration": styleVariables.stepTransitionDuration,
@@ -271,6 +271,7 @@ class GraphVisualization extends React.Component<
       minZoom: 0.5,
       maxZoom: 5,
       wheelSensitivity: 0.1,
+      // @ts-ignore
       style: this.getStyle()
     });
 
@@ -291,17 +292,17 @@ class GraphVisualization extends React.Component<
           " class="cytoscape-html-node-label-${data.id}">
           <div style="font-size: ${hasMetadata ? 12 : 16}px;">${
             data.label
-          }</div>
+            }</div>
           ${
             typeof data.height === "number"
               ? `<div style="font-size: 10px;">h=${data.height}</div>`
               : ""
-          }
+            }
           ${
             typeof data.excess === "number"
               ? `<div  style="font-size: 10px;">e=${data.excess}</div>`
               : ""
-          }
+            }
           </div>
         `;
         }
@@ -468,8 +469,8 @@ class GraphVisualization extends React.Component<
               title: "Change Capacity",
               showCancelButton: true
             });
-            value = parseInt(value, 10);
-            if (!isNaN(value)) edge.data("capacity", value);
+            const capacity = parseInt(value as string, 10);
+            if (!isNaN(capacity)) edge.data("capacity", capacity);
           }
         }
       ]

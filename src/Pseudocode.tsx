@@ -1,14 +1,7 @@
 import React, { useRef, useEffect } from "react";
+import pseudocode from "pseudocode";
 import * as styleVariables from "./variables.scss";
 import { Algorithm, AlgorithmPseudocodeArgs } from "./algorithm";
-
-// pseudocode.js is global and has no type definitions
-// therefore it's interface is declared here
-declare global {
-  const pseudocode: {
-    render: (pseudocode: string, el: HTMLElement, options: Object) => void;
-  };
-}
 
 /**
  * The Pseudocode component shows the latex pseudocode listing
