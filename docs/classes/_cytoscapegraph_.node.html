@@ -1,0 +1,468 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Node | maxflow</title>
+	<meta name="description" content="Documentation for maxflow">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">maxflow</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="../modules/_cytoscapegraph_.html">&quot;CytoscapeGraph&quot;</a>
+				</li>
+				<li>
+					<a href="_cytoscapegraph_.node.html">Node</a>
+				</li>
+			</ul>
+			<h1>Class Node</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>The Node class wraps cytoscape.js nodes to allow the algorithms to be less
+						dependent on the actual graph implementation</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">Node</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_cytoscapegraph_.node.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_cytoscapegraph_.node.html#_cynode" class="tsd-kind-icon">_cy<wbr>Node</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_cytoscapegraph_.node.html#getexcess" class="tsd-kind-icon">get<wbr>Excess</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_cytoscapegraph_.node.html#getheight" class="tsd-kind-icon">get<wbr>Height</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_cytoscapegraph_.node.html#getid" class="tsd-kind-icon">get<wbr>Id</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_cytoscapegraph_.node.html#getlabel" class="tsd-kind-icon">get<wbr>Label</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_cytoscapegraph_.node.html#getoutgoingedges" class="tsd-kind-icon">get<wbr>Outgoing<wbr>Edges</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_cytoscapegraph_.node.html#gettype" class="tsd-kind-icon">get<wbr>Type</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_cytoscapegraph_.node.html#isequalto" class="tsd-kind-icon">is<wbr>Equal<wbr>To</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Node<span class="tsd-signature-symbol">(</span>cyNode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">NodeSingular</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_cytoscapegraph_.node.html" class="tsd-signature-type">Node</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/timmh/maxflow/blob/5815ed3/src/CytoscapeGraph.ts#L176">src/CytoscapeGraph.ts:176</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>cyNode: <span class="tsd-signature-type">NodeSingular</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_cytoscapegraph_.node.html" class="tsd-signature-type">Node</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_cynode" class="tsd-anchor"></a>
+					<h3>_cy<wbr>Node</h3>
+					<div class="tsd-signature tsd-kind-icon">_cy<wbr>Node<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">NodeSingular</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/timmh/maxflow/blob/5815ed3/src/CytoscapeGraph.ts#L176">src/CytoscapeGraph.ts:176</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getexcess" class="tsd-anchor"></a>
+					<h3>get<wbr>Excess</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Excess<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/timmh/maxflow/blob/5815ed3/src/CytoscapeGraph.ts#L214">src/CytoscapeGraph.ts:214</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getheight" class="tsd-anchor"></a>
+					<h3>get<wbr>Height</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Height<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/timmh/maxflow/blob/5815ed3/src/CytoscapeGraph.ts#L205">src/CytoscapeGraph.ts:205</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getid" class="tsd-anchor"></a>
+					<h3>get<wbr>Id</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Id<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/timmh/maxflow/blob/5815ed3/src/CytoscapeGraph.ts#L223">src/CytoscapeGraph.ts:223</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getlabel" class="tsd-anchor"></a>
+					<h3>get<wbr>Label</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Label<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/timmh/maxflow/blob/5815ed3/src/CytoscapeGraph.ts#L201">src/CytoscapeGraph.ts:201</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getoutgoingedges" class="tsd-anchor"></a>
+					<h3>get<wbr>Outgoing<wbr>Edges</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Outgoing<wbr>Edges<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_cytoscapegraph_.edge.html" class="tsd-signature-type">Edge</a><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/timmh/maxflow/blob/5815ed3/src/CytoscapeGraph.ts#L182">src/CytoscapeGraph.ts:182</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="_cytoscapegraph_.edge.html" class="tsd-signature-type">Edge</a><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="gettype" class="tsd-anchor"></a>
+					<h3>get<wbr>Type</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Type<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">"source"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"sink"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"default"</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/timmh/maxflow/blob/5815ed3/src/CytoscapeGraph.ts#L195">src/CytoscapeGraph.ts:195</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">"source"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"sink"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"default"</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="isequalto" class="tsd-anchor"></a>
+					<h3>is<wbr>Equal<wbr>To</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Equal<wbr>To<span class="tsd-signature-symbol">(</span>otherNode<span class="tsd-signature-symbol">: </span><a href="_cytoscapegraph_.node.html" class="tsd-signature-type">Node</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/timmh/maxflow/blob/5815ed3/src/CytoscapeGraph.ts#L224">src/CytoscapeGraph.ts:224</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>otherNode: <a href="_cytoscapegraph_.node.html" class="tsd-signature-type">Node</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_app_.html">&quot;<wbr>App&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_checkbox_.html">&quot;<wbr>Checkbox&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_controls_.html">&quot;<wbr>Controls&quot;</a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="../modules/_cytoscapegraph_.html">&quot;<wbr>Cytoscape<wbr>Graph&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_dropdown_.html">&quot;<wbr>Dropdown&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_footer_.html">&quot;<wbr>Footer&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_graphcontrols_.html">&quot;<wbr>Graph<wbr>Controls&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_graphvisualization_.html">&quot;<wbr>Graph<wbr>Visualization&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_header_.html">&quot;<wbr>Header&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_nodequeuestackvisualization_.html">&quot;<wbr>Node<wbr>Queue<wbr>Stack<wbr>Visualization&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_pseudocode_.html">&quot;<wbr>Pseudocode&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_references_.html">&quot;<wbr>References&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_switch_.html">&quot;<wbr>Switch&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_algorithm_.html">&quot;algorithm&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_algorithms_edmonds_karp_.html">&quot;algorithms/<wbr>Edmonds-<wbr><wbr>Karp&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_algorithms_ford_fulkerson_depth_first_.html">&quot;algorithms/<wbr>Ford–<wbr>Fulkerson-<wbr><wbr>Depth-<wbr><wbr>First&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_algorithms_push_relabel_.html">&quot;algorithms/<wbr>Push-<wbr><wbr>Relabel&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_algorithms_index_.html">&quot;algorithms/index&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_index_.html">&quot;index&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_utils_assertvalidgraph_.html">&quot;utils/assert<wbr>Valid<wbr>Graph&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_utils_defaulthash_.html">&quot;utils/default<wbr>Hash&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_utils_io_.html">&quot;utils/io&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_utils_useinterval_.html">&quot;utils/use<wbr>Interval&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_utils_usequeue_.html">&quot;utils/use<wbr>Queue&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="_cytoscapegraph_.edge.html" class="tsd-kind-icon">Edge</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="_cytoscapegraph_.graph.html" class="tsd-kind-icon">Graph</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="_cytoscapegraph_.graphcombinedmutation.html" class="tsd-kind-icon">Graph<wbr>Combined<wbr>Mutation</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="_cytoscapegraph_.graphedgeflowmutation.html" class="tsd-kind-icon">Graph<wbr>Edge<wbr>Flow<wbr>Mutation</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="_cytoscapegraph_.graphedgehighlightmutation.html" class="tsd-kind-icon">Graph<wbr>Edge<wbr>Highlight<wbr>Mutation</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="_cytoscapegraph_.graphnodeexcessmutation.html" class="tsd-kind-icon">Graph<wbr>Node<wbr>Excess<wbr>Mutation</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="_cytoscapegraph_.graphnodeheightmutation.html" class="tsd-kind-icon">Graph<wbr>Node<wbr>Height<wbr>Mutation</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="_cytoscapegraph_.graphnodehighlightmutation.html" class="tsd-kind-icon">Graph<wbr>Node<wbr>Highlight<wbr>Mutation</a>
+					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class tsd-parent-kind-module">
+						<a href="_cytoscapegraph_.node.html" class="tsd-kind-icon">Node</a>
+						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+								<a href="_cytoscapegraph_.node.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_cytoscapegraph_.node.html#_cynode" class="tsd-kind-icon">_cy<wbr>Node</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_cytoscapegraph_.node.html#getexcess" class="tsd-kind-icon">get<wbr>Excess</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_cytoscapegraph_.node.html#getheight" class="tsd-kind-icon">get<wbr>Height</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_cytoscapegraph_.node.html#getid" class="tsd-kind-icon">get<wbr>Id</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_cytoscapegraph_.node.html#getlabel" class="tsd-kind-icon">get<wbr>Label</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_cytoscapegraph_.node.html#getoutgoingedges" class="tsd-kind-icon">get<wbr>Outgoing<wbr>Edges</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_cytoscapegraph_.node.html#gettype" class="tsd-kind-icon">get<wbr>Type</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_cytoscapegraph_.node.html#isequalto" class="tsd-kind-icon">is<wbr>Equal<wbr>To</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_cytoscapegraph_.graphmutation.html" class="tsd-kind-icon">Graph<wbr>Mutation</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>
