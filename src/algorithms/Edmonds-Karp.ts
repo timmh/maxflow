@@ -81,47 +81,64 @@ const EdmondsKarp: Algorithm = {
     let flow = 0;
     let pred: { [key: string]: Edge };
 
+    yield {
+      highlightedLines: [4, 5],
+      linearNodes: []
+    };
+
     do {
       const q = [sourceNode];
       pred = {};
 
       const mutationsToUndoAfterSearch = [];
 
-      yield {
-        highlightedLines: [4, 5],
-        linearNodes: q
-      };
-
       while (q.length > 0 && !pred[sinkNode.getId()]) {
-        const cur = q.shift()!;
-        mutationsToUndoAfterSearch.push(
-          new GraphNodeHighlightMutation(cur).inverse()
-        );
         yield {
           highlightedLines: [7],
           linearNodes: q,
+          graphMutations: []
+        };
+        const cur = q.shift()!;
+        yield {
+          highlightedLines: [8],
+          linearNodes: q,
           graphMutations: [new GraphNodeHighlightMutation(cur)]
         };
+        mutationsToUndoAfterSearch.push(
+          new GraphNodeHighlightMutation(cur).inverse()
+        );
         for (let edge of cur.getOutgoingEdges()) {
+          yield {
+            highlightedLines: [9],
+            linearNodes: q,
+            graphMutations: [new GraphEdgeHighlightMutation(edge)]
+          };
+          mutationsToUndoAfterSearch.push(
+            new GraphEdgeHighlightMutation(edge).inverse()
+          );
           if (
             pred[edge.getTargetNode().getId()] === undefined &&
             !edge.getTargetNode().isEqualTo(sourceNode) &&
             edge.getCapacity() > edge.getFlow()
           ) {
+            yield {
+              highlightedLines: [10, 11],
+              linearNodes: q,
+              graphMutations: [new GraphEdgeHighlightMutation(edge)]
+            };
+            mutationsToUndoAfterSearch.push(
+              new GraphEdgeHighlightMutation(edge).inverse()
+            );
             pred[edge.getTargetNode().getId()] = edge;
             q.push(edge.getTargetNode());
           }
-          mutationsToUndoAfterSearch.push(
-            new GraphEdgeHighlightMutation(edge).inverse()
-          );
-          yield {
-            highlightedLines: [10, 11],
-            linearNodes: q,
-            graphMutations: [new GraphEdgeHighlightMutation(edge)]
-          };
           if (edge.getTargetNode().isEqualTo(sinkNode)) break;
         }
       }
+      yield {
+        highlightedLines: [15],
+        linearNodes: q,
+      };
       if (pred[sinkNode.getId()] !== undefined) {
         let currentHighlightEdge = pred[sinkNode.getId()];
         const foundPathHighlightMutations: GraphMutation[] = [];
@@ -152,7 +169,13 @@ const EdmondsKarp: Algorithm = {
 
         let df = Infinity;
         let currentEdge = pred[sinkNode.getId()];
+        let previousEdge = currentEdge;
         while (currentEdge !== undefined) {
+          yield {
+            highlightedLines: [18],
+            linearNodes: q,
+            graphMutations: [new GraphEdgeHighlightMutation(previousEdge).inverse(), new GraphEdgeHighlightMutation(currentEdge)]
+          }
           df = Math.min(df, currentEdge.getCapacity() - currentEdge.getFlow());
           currentEdge = pred[currentEdge.getSourceNode().getId()];
         }

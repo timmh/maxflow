@@ -1,4 +1,4 @@
-import cytoscape, { EdgeSingular } from "cytoscape";
+import cytoscape from "cytoscape";
 
 /**
  * The interface each graph mutation (both visual and non-visual)

@@ -5,7 +5,7 @@
  * of `.ts`
  */
 
-export default [
+const algorithms = [
   {
     label: "Edmonds-Karp",
     filename: "Edmonds-Karp"
@@ -19,3 +19,5 @@ export default [
     filename: "Push-Relabel"
   }
 ];
+
+export default algorithms;
