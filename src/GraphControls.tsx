@@ -2,7 +2,7 @@ import React from "react";
 import Switch from "./Switch";
 import Header from "./Header";
 import { useMediaQuery } from "react-responsive";
-import * as styleVariables from "./variables.scss";
+import styleVariables from "./variables.scss";
 import Dropdown from "./Dropdown";
 import Checkbox from "./Checkbox";
 

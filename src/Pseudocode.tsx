@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import pseudocode from "pseudocode";
-import * as styleVariables from "./variables.scss";
+import styleVariables from "./variables.scss";
 import { Algorithm, AlgorithmPseudocodeArgs } from "./algorithm";
 
 /**

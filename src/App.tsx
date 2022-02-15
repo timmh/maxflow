@@ -12,7 +12,7 @@ import GraphControls, { GraphDisplayState } from "./GraphControls";
 import FileSaver from "file-saver";
 import { Graph } from "./CytoscapeGraph";
 import GraphVisualization from "./GraphVisualization";
-import * as styleVariables from "./variables.scss";
+import styleVariables from "./variables.scss";
 import useQueue from "./utils/useQueue";
 import algorithms from "./algorithms";
 import Footer from "./Footer";
@@ -116,8 +116,12 @@ const App: React.FC = () => {
     try {
       assertValidGraph(visRef.cy!);
     } catch (err) {
-      Swal.fire("Error", err.toString(), "error");
-      return;
+      if (err instanceof Error) {
+        Swal.fire("Error", err.toString(), "error");
+        return;
+      } else {
+        throw err;
+      }
     }
 
     let result: AlgorithmStepResult;
@@ -244,7 +248,12 @@ const App: React.FC = () => {
             visRef!.cy!.json({ elements });
             visRef!.resetLayout();
           } catch (err) {
-            Swal.fire("Error", `Parsing error: ${err.toString()}`, "error");
+            if (err instanceof Error) {
+              Swal.fire("Error", `Parsing error: ${err.toString()}`, "error");
+              return;
+            } else {
+              throw err;
+            }
           }
         }
       };

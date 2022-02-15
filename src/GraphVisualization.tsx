@@ -10,7 +10,7 @@ import FontFaceObserver from "fontfaceobserver";
 import cxtmenu from "cytoscape-cxtmenu";
 import Swal from "sweetalert2";
 import defaultHash from "./utils/defaultHash";
-import * as styleVariables from "./variables.scss";
+import styleVariables from "./variables.scss";
 import {
   cyto2tgf,
   tgf2cyto,
@@ -30,7 +30,10 @@ const graphToHash = (cy: cytoscape.Core) =>
 
 const hashToGraph = (hash: string) => {
   if (!hash.startsWith("#")) throw new Error("invalid hash");
-  return tgf2cyto(urlSafeBase64Decode(decodeURIComponent(hash.substr(1))));
+  const base64 = decodeURIComponent(hash.slice(1));
+  const tgf = urlSafeBase64Decode(base64);
+  const cyto = tgf2cyto(tgf);
+  return cyto;
 };
 
 const getNewNodeLabel = () =>

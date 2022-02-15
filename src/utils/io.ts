@@ -136,7 +136,7 @@ const urlSafeBase64Encode = (str: string) =>
 const urlSafeBase64Decode = (str: string) =>
   atob(
     (str + "===")
-      .slice(0, str.length + (str.length % 4))
+      .slice(0, str.length + ((4 - (str.length % 4)) % 4))
       .replace(/-/g, "+")
       .replace(/_/g, "/")
   );
