@@ -238,7 +238,7 @@ button {
     .ps-line--highlighted-#{$i}::before {
       background-color: lighten(
         $color-highlight,
-        (($i) / ($highlighted-lines-count)) * 50%
+        calc((($i) / ($highlighted-lines-count)) * 50%)
       );
     }
   }

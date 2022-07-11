@@ -136,6 +136,9 @@ class GraphVisualization extends React.Component<
 
   restyle = () => {
     if (!this.cy) return;
+    // the following line fixes some edge rendering issue with cytoscape.js
+    // @ts-ignore
+    this.cy.style().clear().update();
     // @ts-ignore
     this.cy.style(this.getStyle());
   };

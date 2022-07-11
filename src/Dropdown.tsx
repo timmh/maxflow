@@ -3,6 +3,7 @@ import React, { useState, useCallback } from "react";
 const Dropdown: React.FunctionComponent<{
   title: string;
   size: "s" | "m" | "l";
+  children?: React.ReactNode;
 }> = ({ title, size, children }) => {
   const [open, setOpen] = useState(false);
 
