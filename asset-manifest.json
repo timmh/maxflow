@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.css": "/static/css/main.35e35d1b.css",
-    "main.js": "/static/js/main.05af5ec5.js",
-    "static/js/769.63290623.chunk.js": "/static/js/769.63290623.chunk.js",
-    "static/js/658.9894f86c.chunk.js": "/static/js/658.9894f86c.chunk.js",
-    "static/js/443.ff37a290.chunk.js": "/static/js/443.ff37a290.chunk.js",
+    "main.css": "/static/css/main.06d821a1.css",
+    "main.js": "/static/js/main.807a30bb.js",
+    "static/js/769.b9fb1f6c.chunk.js": "/static/js/769.b9fb1f6c.chunk.js",
+    "static/js/658.535461a1.chunk.js": "/static/js/658.535461a1.chunk.js",
+    "static/js/443.8b56372b.chunk.js": "/static/js/443.8b56372b.chunk.js",
     "static/media/KaTeX_AMS-Regular.ttf": "/static/media/KaTeX_AMS-Regular.853be92419a6c3766b9a.ttf",
     "static/media/KaTeX_Main-Regular.ttf": "/static/media/KaTeX_Main-Regular.9eba1d77abcf2aa6e94e.ttf",
     "static/media/KaTeX_Main-Bold.ttf": "/static/media/KaTeX_Main-Bold.8169508bf58f8bd92ad8.ttf",
@@ -66,14 +66,14 @@
     "static/media/KaTeX_Size3-Regular.woff": "/static/media/KaTeX_Size3-Regular.7947224e8a9914fa332b.woff",
     "static/media/KaTeX_Size3-Regular.woff2": "/static/media/KaTeX_Size3-Regular.e1951519f6f0596f7356.woff2",
     "index.html": "/index.html",
-    "main.35e35d1b.css.map": "/static/css/main.35e35d1b.css.map",
-    "main.05af5ec5.js.map": "/static/js/main.05af5ec5.js.map",
-    "769.63290623.chunk.js.map": "/static/js/769.63290623.chunk.js.map",
-    "658.9894f86c.chunk.js.map": "/static/js/658.9894f86c.chunk.js.map",
-    "443.ff37a290.chunk.js.map": "/static/js/443.ff37a290.chunk.js.map"
+    "main.06d821a1.css.map": "/static/css/main.06d821a1.css.map",
+    "main.807a30bb.js.map": "/static/js/main.807a30bb.js.map",
+    "769.b9fb1f6c.chunk.js.map": "/static/js/769.b9fb1f6c.chunk.js.map",
+    "658.535461a1.chunk.js.map": "/static/js/658.535461a1.chunk.js.map",
+    "443.8b56372b.chunk.js.map": "/static/js/443.8b56372b.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.35e35d1b.css",
-    "static/js/main.05af5ec5.js"
+    "static/css/main.06d821a1.css",
+    "static/js/main.807a30bb.js"
   ]
 }
