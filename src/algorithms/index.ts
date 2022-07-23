@@ -12,7 +12,7 @@ const algorithms = [
   },
   {
     label: "Ford-Fulkerson (depth-first)",
-    filename: "Ford–Fulkerson-Depth-First"
+    filename: "Ford-Fulkerson-Depth-First"
   },
   {
     label: "Push-Relabel (generic)",

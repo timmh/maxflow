@@ -11,7 +11,7 @@ import { Algorithm } from "../algorithm";
 
 /** The Ford-Fulkerson algorithm using depth-first search */
 const FordFulkerson: Algorithm = {
-  name: "Ford–Fulkerson-Depth-First",
+  name: "Ford-Fulkerson-Depth-First",
   linearDataStructure: "stack",
   pseudocode: ({ sourceName, sinkName }) => String.raw`
     \begin{algorithm}
