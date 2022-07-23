@@ -16,7 +16,7 @@ const Footer = ({ onTourPressed }: { onTourPressed: () => void }) => (
     {" | "}
     <a href="https://github.com/timmh/maxflow/issues">Feedback</a>
     {" | "}
-    <a href="/docs">Docs</a>
+    <a href="https://timm.haucke.xyz">made by Timm Haucke</a>
   </div>
 );
 
