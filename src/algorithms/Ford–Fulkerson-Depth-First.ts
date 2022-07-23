@@ -53,12 +53,8 @@ const FordFulkerson: Algorithm = {
     { label: `L. R. Ford, D. R. Fulkerson: Maximal Flow Through a Network (1956)`, url: 'https://www.cambridge.org/core/services/aop-cambridge-core/content/view/5D6E55D3B06C4F7B1043BC1D82D40764/S0008414X00036890a.pdf/maximal_flow_through_a_network.pdf'}
   ],
   labeledBlocks: [
-    { lines: [4, 14], color: "#ffdcdc", label: "Depth-first search" },
-    {
-      lines: [15, 26],
-      color: "#e3ffff",
-      label: "Increase flow along found path"
-    }
+    { lines: [4, 14], label: "Depth-first search" },
+    { lines: [15, 26], label: "Increase flow along found path" },
   ],
   implementation: function*(
     graph: Graph

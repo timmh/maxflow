@@ -60,12 +60,8 @@ const EdmondsKarp: Algorithm = {
     }
   ],
   labeledBlocks: [
-    { lines: [4, 14], color: "#ffdcdc", label: "Breadth-first search" },
-    {
-      lines: [15, 26],
-      color: "#e3ffff",
-      label: "Increase flow along found path"
-    }
+    { lines: [4, 14], label: "Breadth-first search" },
+    { lines: [15, 26], label: "Increase flow along found path" },
   ],
   implementation: function*(
     graph: Graph

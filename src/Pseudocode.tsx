@@ -58,7 +58,7 @@ const Pseudocode: React.FC<{
             `// ${labeledBlock.label}`
           );
         }
-        if (i + 1 >= labeledBlock.lines[0] && i < labeledBlock.lines[1]) {
+        if (labeledBlock.color && i + 1 >= labeledBlock.lines[0] && i < labeledBlock.lines[1]) {
           (line as HTMLElement).style.setProperty(
             "--block-color",
             labeledBlock.color
@@ -66,7 +66,7 @@ const Pseudocode: React.FC<{
         }
       });
     });
-  }, [algorithm]);
+  });
 
   return (
     <div className="pseudocode">
