@@ -146,6 +146,48 @@ const App: React.FC = () => {
     }
   };
 
+  const jumpToEnd = () => {
+    if (!algorithmImplementationInstance || !visRef) return;
+    try {
+      assertValidGraph(visRef.cy!);
+    } catch (err) {
+      if (err instanceof Error) {
+        Swal.fire("Error", err.toString(), "error");
+        return;
+      } else {
+        throw err;
+      }
+    }
+
+    let result: AlgorithmStepResult;
+    let stepBackwardBufferTemp = stepBackwardBuffer;
+    let stepBackwardBufferIndexTemp = stepBackwardBufferIndex;
+    while(true) {
+      if (stepBackwardBufferIndexTemp >= stepBackwardBuffer.length - 1) {
+        const yieldResult = algorithmImplementationInstance.next();
+        result = yieldResult.value;
+        stepBackwardBufferTemp = [...stepBackwardBufferTemp, yieldResult.value]
+        stepBackwardBufferIndexTemp += 1;
+      } else {
+        result = stepBackwardBufferTemp[stepBackwardBufferIndexTemp + 1];
+        stepBackwardBufferIndexTemp += 1;
+      }
+      if (result) {
+        const { highlightedLines = [], graphMutations = [], done } = result;
+        if (done) {
+          setAlgorithmState("finished");
+          break;
+        }
+        enqueueHighlightedLines(highlightedLines);
+        visRef.cy!.batch(() => {
+          graphMutations.forEach(graphMutation => graphMutation.apply());
+        });
+      }
+    }
+    setStepBackwardBuffer(stepBackwardBufferTemp);
+    setStepBackwardBufferIndex(stepBackwardBufferIndexTemp);
+  };
+
   const stepBackward = () => {
     if (!algorithmImplementationInstance || !visRef) return;
     if (stepBackwardBufferIndex <= 0 || stepBackwardBuffer.length === 0) return;
@@ -355,6 +397,9 @@ const App: React.FC = () => {
               stepForward={
                 algorithmState !== "finished" ? stepForward : undefined
               }
+              jumpToEnd={
+                algorithmState !== "finished" ? jumpToEnd : undefined
+              }
               reset={reset}
               algorithms={algorithms.map(({ label, filename }) => ({
                 label,
@@ -421,8 +466,9 @@ const tourSteps = [
   {
     target: ".controls__buttons",
     content: `
-      Use these buttons to step forwards or backwards,
-      run to completion or reset the algorithm
+      Use these buttons to (from left to right) step backwards,
+      run step-by-step to completion, step forwards,
+      skip to completion or reset the algorithm
     `
   },
   {

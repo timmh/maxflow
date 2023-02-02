@@ -5,7 +5,8 @@ import {
   faPause,
   faStepForward,
   faUndo,
-  faStepBackward
+  faStepBackward,
+  faFastForward
 } from "@fortawesome/free-solid-svg-icons";
 
 /**
@@ -27,6 +28,7 @@ const Controls: React.FC<{
   setState: (state: "stopped" | "auto" | "manual" | "finished") => void;
   stepBackward?: () => void;
   stepForward?: () => void;
+  jumpToEnd?: () => void;
   reset: () => void;
   algorithms: { value: string; label: string }[];
   currentAlgorithm: string;
@@ -36,6 +38,7 @@ const Controls: React.FC<{
   setState,
   stepBackward,
   stepForward,
+  jumpToEnd,
   reset,
   algorithms,
   currentAlgorithm,
@@ -83,6 +86,17 @@ const Controls: React.FC<{
           disabled={state === "auto" || !stepForward}
         >
           <FontAwesomeIcon size="2x" icon={faStepForward} />
+        </button>
+        <button
+          title="Jump to End"
+          className="controls__button"
+          onClick={() => {
+            setState("manual");
+            jumpToEnd && jumpToEnd();
+          }}
+          disabled={state === "auto" || !jumpToEnd}
+        >
+          <FontAwesomeIcon size="2x" icon={faFastForward} />
         </button>
         <button
           title="Reset"
