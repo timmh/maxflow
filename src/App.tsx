@@ -148,7 +148,7 @@ const App: React.FC = () => {
 
   const stepBackward = () => {
     if (!algorithmImplementationInstance || !visRef) return;
-    if (stepBackwardBufferIndex === -1) return;
+    if (stepBackwardBufferIndex <= 0 || stepBackwardBuffer.length === 0) return;
     const currentResult = stepBackwardBuffer[stepBackwardBufferIndex];
     const result = stepBackwardBuffer[stepBackwardBufferIndex - 1];
     setStepBackwardBufferIndex(stepBackwardBufferIndex - 1);
@@ -350,7 +350,7 @@ const App: React.FC = () => {
               state={algorithmState}
               setState={setAlgorithmState}
               stepBackward={
-                stepBackwardBufferIndex > -1 ? stepBackward : undefined
+                stepBackwardBufferIndex > 0 ? stepBackward : undefined
               }
               stepForward={
                 algorithmState !== "finished" ? stepForward : undefined
